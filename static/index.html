@@ -1211,18 +1211,26 @@
       const activeCls = "px-2.5 py-1.5 rounded-md transition-all bg-amber-500 text-slate-950 font-semibold shadow-sm";
       const inactiveCls = "px-2.5 py-1.5 rounded-md transition-all text-slate-300 hover:text-white";
 
-      bAll.className = (whId === null) ? activeCls : inactiveCls;
-      b1.className = (whId === 1) ? activeCls : inactiveCls;
-      b2.className = (whId === 2) ? activeCls : inactiveCls;
+      if (bAll) bAll.className = (whId === null) ? activeCls : inactiveCls;
+      if (b1) b1.className = (whId === 1) ? activeCls : inactiveCls;
+      if (b2) b2.className = (whId === 2) ? activeCls : inactiveCls;
 
       const lbl = document.getElementById("inv-current-wh-label");
       if (lbl) {
-        if (whId === null) lbl.textContent = "Cả 2 Kho";
-        if (whId === 1) lbl.textContent = "Kho 1 - Kho Tổng";
+        if (whId === null) lbl.textContent = "Cả 2 Kho (Tổng tồn hệ thống)";
+        if (whId === 1) lbl.textContent = "Kho 1 - Kho Tổng (Ở Nhà)";
         if (whId === 2) lbl.textContent = "Kho 2 - Cửa Hàng / Showroom";
       }
 
-      loadProducts();
+      // Đưa về đúng modul Kho Hàng & Ma Trận Size khi bấm từ bất kỳ tab nào
+      const invView = document.getElementById("view-inventory");
+      const isAlreadyOnInventory = invView && !invView.classList.contains("hidden");
+
+      if (!isAlreadyOnInventory) {
+        switchTab('inventory');
+      } else {
+        loadProducts();
+      }
     }
 
     // --- 1. TẢI DỮ LIỆU DASHBOARD ---
