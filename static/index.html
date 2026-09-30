@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Hệ Thống Quản Lý Kho Giày Da (2 Kho & Ma Trận Size)</title>
+  <title>KingsMan Leather Shoemaker - Quản Lý Kho Giày Da (2 Kho & Ma Trận Size)</title>
+  <link rel="icon" type="image/jpeg" href="/static/logo.jpg" />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -80,16 +81,17 @@
       <div class="flex items-center justify-between h-16">
         
         <!-- Brand & Logo -->
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-yellow-500 flex items-center justify-center shadow-md">
-            <i data-lucide="package" class="w-6 h-6 text-slate-950 font-bold"></i>
+        <div class="flex items-center space-x-3 cursor-pointer py-1" onclick="switchTab('dashboard')">
+          <div class="w-12 h-12 rounded-xl bg-white p-1 flex items-center justify-center shadow-lg border-2 border-amber-400 overflow-hidden ring-2 ring-amber-500/30 flex-shrink-0">
+            <img src="/static/logo.jpg?v=2" alt="KingsMan Leather Shoemaker Logo" class="w-full h-full object-contain" />
           </div>
           <div>
             <div class="flex items-center space-x-2">
-              <span class="font-extrabold text-lg tracking-tight text-white">LEATHER<span class="text-amber-400">STEP</span></span>
-              <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">2 KHO WMS</span>
+              <span class="font-black text-base sm:text-xl tracking-wide text-white uppercase">KINGSMAN</span>
+              <span class="text-[10px] sm:text-xs uppercase font-extrabold tracking-wider px-2 py-0.5 rounded bg-amber-400 text-slate-950 shadow-xs">LEATHER SHOEMAKER</span>
+              <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 hidden md:inline-block">2 KHO WMS</span>
             </div>
-            <p class="text-xs text-slate-400 hidden sm:block">Quản lý Kho Giày Da Trực Tuyến</p>
+            <p class="text-[11px] text-amber-300 font-medium hidden sm:block tracking-wider">DẪN BƯỚC THÀNH CÔNG • Quản lý Kho Giày Da Cao Cấp</p>
           </div>
         </div>
 
@@ -129,30 +131,20 @@
       </div>
 
       <!-- Main Navigation Tabs -->
-      <div class="flex space-x-1 overflow-x-auto py-2 scrollbar-none border-t border-slate-800/80 text-sm">
+      <div class="flex space-x-1.5 overflow-x-auto py-2 scrollbar-none border-t border-slate-800/80 text-sm">
         <button id="tab-btn-dashboard" onclick="switchTab('dashboard')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-amber-400 bg-slate-800/80 transition-all">
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
           <span>Tổng Quan</span>
         </button>
 
         <button id="tab-btn-inventory" onclick="switchTab('inventory')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
-          <i data-lucide="boxes" class="w-4 h-4"></i>
+          <i data-lucide="boxes" class="w-4 h-4 text-amber-400"></i>
           <span>Kho & Ma Trận Size</span>
         </button>
 
-        <button id="tab-btn-inbound" onclick="switchTab('inbound')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
-          <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-400"></i>
-          <span>Nhập Kho</span>
-        </button>
-
         <button id="tab-btn-outbound" onclick="switchTab('outbound')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
-          <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-400"></i>
-          <span>Xuất Bán</span>
-        </button>
-
-        <button id="tab-btn-transfer" onclick="switchTab('transfer')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
-          <i data-lucide="arrow-left-right" class="w-4 h-4 text-sky-400"></i>
-          <span>Chuyển Kho (1 ⇄ 2)</span>
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-semibold text-amber-300">Nhập Liệu Toàn Năng</span>
         </button>
 
         <button id="tab-btn-audit" onclick="switchTab('audit')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
@@ -161,7 +153,7 @@
         </button>
 
         <button id="tab-btn-scanner" onclick="switchTab('scanner')" class="tab-btn flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all">
-          <i data-lucide="scan-line" class="w-4 h-4 text-amber-400"></i>
+          <i data-lucide="scan-line" class="w-4 h-4 text-emerald-400"></i>
           <span>Tra Cứu Mã</span>
         </button>
 
@@ -210,7 +202,7 @@
             <h3 id="stat-wh1-pairs" class="text-2xl sm:text-3xl font-extrabold text-blue-600">...</h3>
             <span class="text-xs text-slate-500 font-medium">đôi</span>
           </div>
-          <p class="text-xs text-slate-400 mt-2">Địa chỉ: Đống Đa, Hà Nội</p>
+          <p class="text-xs text-slate-400 mt-2"></p>
         </div>
 
         <!-- Warehouse 2 (Store) -->
@@ -225,7 +217,7 @@
             <h3 id="stat-wh2-pairs" class="text-2xl sm:text-3xl font-extrabold text-indigo-600">...</h3>
             <span class="text-xs text-slate-500 font-medium">đôi</span>
           </div>
-          <p class="text-xs text-slate-400 mt-2">Địa chỉ: Lê Văn Sỹ, Q.3, HCM</p>
+          <p class="text-xs text-slate-400 mt-2"></p>
         </div>
 
         <!-- Total Capital & Retail Value -->
@@ -261,11 +253,11 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <button onclick="switchTab('inbound')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm flex items-center space-x-1.5">
+            <button onclick="switchTab('outbound'); fillSampleInput('nhập kho WTN 38 5 đôi. 40 3 đôi vào kho tổng');" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-sm flex items-center space-x-1.5 transition-all">
               <i data-lucide="plus-circle" class="w-4 h-4"></i>
               <span>Nhập Thêm Hàng</span>
             </button>
-            <button onclick="switchTab('transfer')" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-sm flex items-center space-x-1.5">
+            <button onclick="switchTab('outbound'); fillSampleInput('chuyển 1 đôi WTN size 41 từ kho 1 sang kho 2');" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-sm flex items-center space-x-1.5 transition-all">
               <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
               <span>Chuyển Giữa 2 Kho</span>
             </button>
@@ -328,7 +320,7 @@
           <div class="mt-6 pt-4 border-t border-slate-700/80 flex items-center justify-between">
             <button onclick="downloadExcelReport()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all shadow">
               <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-              <span>Xuất Báo Cáo Excel (2 Kho)</span>
+              <span>Xuất Phiếu Xuất Hàng Excel</span>
             </button>
           </div>
         </div>
@@ -341,33 +333,64 @@
     <section id="view-inventory" class="hidden space-y-5">
       
       <!-- Toolbar -->
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div class="flex flex-1 items-center space-x-3">
-          <div class="relative flex-1 max-w-md">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
-            <input id="inv-search-input" oninput="filterInventoryTable()" type="text" placeholder="Tìm theo mã SKU, tên mẫu giày, chất liệu, màu sắc..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex flex-1 items-center space-x-3">
+            <div class="relative flex-1 max-w-md">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+              <input id="inv-search-input" oninput="filterInventoryTable()" type="text" placeholder="🔍 Gõ nhanh mã &amp; size (vd: OXD 41, CTD 43, WTN 39)..." class="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium" />
+              <button id="inv-search-clear-btn" type="button" onclick="clearInventorySearch()" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 p-0.5 rounded-full hover:bg-slate-200 transition-all">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <select id="inv-category-filter" onchange="filterInventoryTable()" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+              <option value="">Tất cả loại giày</option>
+              <option value="Oxford">Giày Oxford</option>
+              <option value="Derby">Giày Derby</option>
+              <option value="Loafer">Giày Loafer</option>
+              <option value="Boot">Chelsea Boot</option>
+            </select>
           </div>
 
-          <select id="inv-category-filter" onchange="filterInventoryTable()" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-            <option value="">Tất cả loại giày</option>
-            <option value="Oxford">Giày Oxford</option>
-            <option value="Derby">Giày Derby</option>
-            <option value="Loafer">Giày Loafer</option>
-            <option value="Boot">Chelsea Boot</option>
-          </select>
+          <div class="flex items-center space-x-2">
+            <button onclick="openNewProductModal()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl flex items-center space-x-1.5 shadow-sm transition-all">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Thêm Mẫu Giày Mới</span>
+            </button>
+            <button onclick="downloadExcelReport()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl flex items-center space-x-1.5 transition-all">
+              <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+              <span>Xuất Excel Phiếu Xuất</span>
+            </button>
+          </div>
         </div>
 
-        <div class="flex items-center space-x-2">
-          <button onclick="openNewProductModal()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl flex items-center space-x-1.5 shadow-sm transition-all">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Thêm Mẫu Giày Mới</span>
+        <!-- Gợi ý bấm thử tra cứu nhanh vị trí kho -->
+        <div class="flex items-center gap-1.5 text-[11px] text-slate-500 flex-wrap pt-1 border-t border-slate-100">
+          <span class="font-semibold text-amber-900 flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>Gợi ý tra nhanh vị trí kho:</span>
+          </span>
+          <button type="button" onclick="setQuickInventorySearch('OXD 41')" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold font-mono transition-all">
+            OXD 41
           </button>
-          <button onclick="downloadExcelReport()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl flex items-center space-x-1.5 transition-all">
-            <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
-            <span>Tải Excel</span>
+          <button type="button" onclick="setQuickInventorySearch('CTD 43')" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold font-mono transition-all">
+            CTD 43
+          </button>
+          <button type="button" onclick="setQuickInventorySearch('WTN 39')" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold font-mono transition-all">
+            WTN 39
+          </button>
+          <button type="button" onclick="setQuickInventorySearch('DBD 40')" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold font-mono transition-all">
+            DBD 40
+          </button>
+          <button type="button" onclick="setQuickInventorySearch('41')" class="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold font-mono transition-all">
+            Xem tất cả Size 41
           </button>
         </div>
       </div>
+
+      <!-- Quick Search Size Location Result Box -->
+      <div id="inv-quick-search-box" class="hidden transition-all duration-300"></div>
 
       <!-- Current Warehouse Banner -->
       <div class="bg-amber-50/70 border border-amber-200/80 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs text-amber-900">
@@ -382,136 +405,35 @@
         </div>
       </div>
 
-      <!-- Products Matrix Table -->
+      <!-- Products Matrix Table with Sticky Header -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs sm:text-sm">
-            <thead>
-              <tr class="bg-slate-900 text-white font-semibold text-[11px] uppercase tracking-wider">
-                <th class="py-3.5 px-4">Mẫu Giày Da</th>
-                <th class="py-3.5 px-3">Chất Liệu / Màu</th>
-                <th class="py-3.5 px-3 text-right">Giá Bán</th>
-                <!-- Size Columns -->
-                <th class="py-3.5 px-2 text-center bg-slate-800">38</th>
-                <th class="py-3.5 px-2 text-center bg-amber-950/60 text-amber-300">39 ⭐</th>
-                <th class="py-3.5 px-2 text-center bg-amber-950/60 text-amber-300">40 ⭐</th>
-                <th class="py-3.5 px-2 text-center bg-amber-950/60 text-amber-300">41 ⭐</th>
-                <th class="py-3.5 px-2 text-center bg-amber-950/60 text-amber-300">42 ⭐</th>
-                <th class="py-3.5 px-2 text-center bg-slate-800">43</th>
-                <th class="py-3.5 px-2 text-center bg-slate-800">44</th>
-                <th class="py-3.5 px-2 text-center bg-slate-800">45</th>
-                <th class="py-3.5 px-2 text-center bg-slate-800">46</th>
-                <th class="py-3.5 px-2 text-center bg-slate-800">47</th>
-                <th class="py-3.5 px-3 text-center">Tổng Tồn</th>
-                <th class="py-3.5 px-4 text-center">Thao Tác Nhanh</th>
+        <div class="overflow-x-auto overflow-y-auto max-h-[70vh] min-h-[460px] relative scrollbar-thin">
+          <table class="w-full text-left border-separate border-spacing-0 text-xs sm:text-sm">
+            <thead class="sticky top-0 z-30 shadow-md">
+              <tr class="text-white font-semibold text-[11px] uppercase tracking-wider">
+                <th class="sticky top-0 left-0 z-40 py-3.5 px-4 bg-slate-900 border-b-2 border-slate-700 shadow-sm whitespace-nowrap">Mã Mẫu Giày</th>
+                <!-- Size Columns: Tiêu đề size ghim cố định ở đỉnh khi cuộn chuột và có ID để highlight khi tra cứu -->
+                <th id="th-size-38" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">38</th>
+                <th id="th-size-39" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">39</th>
+                <th id="th-size-40" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">40</th>
+                <th id="th-size-41" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">41</th>
+                <th id="th-size-42" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">42</th>
+                <th id="th-size-43" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">43</th>
+                <th id="th-size-44" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">44</th>
+                <th id="th-size-45" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">45</th>
+                <th id="th-size-46" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">46</th>
+                <th id="th-size-47" class="sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors">47</th>
+                <th class="sticky top-0 z-30 py-3.5 px-3 text-center bg-slate-900 border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm whitespace-nowrap">Tổng Tồn</th>
+                <th class="sticky top-0 z-30 py-3.5 px-4 text-center bg-slate-900 border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm whitespace-nowrap">Thao Tác Nhanh</th>
               </tr>
             </thead>
-            <tbody id="inventory-table-body" class="divide-y divide-slate-100">
+            <tbody id="inventory-table-body">
               <!-- Render by JavaScript -->
             </tbody>
           </table>
         </div>
       </div>
 
-    </section>
-
-    <!-- ================= TAB 3: INBOUND (NHẬP KHO) ================= -->
-    <section id="view-inbound" class="hidden max-w-4xl mx-auto space-y-6">
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
-        <div class="flex items-center space-x-3 pb-4 border-b border-slate-100 mb-5">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-            <i data-lucide="arrow-down-left" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-bold text-slate-900">Tạo Phiếu Nhập Kho</h2>
-            <p class="text-xs text-slate-500">Nhập hàng từ xưởng sản xuất hoặc nhà cung cấp da giày vào Kho 1 hoặc Kho 2</p>
-          </div>
-        </div>
-
-        <form id="inbound-form" onsubmit="submitInboundTransaction(event)" class="space-y-5">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Kho Nhận Hàng (*)</label>
-              <select id="inbound-target-wh" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                <option value="1">Kho 1 - Kho Tổng (Đống Đa, Hà Nội)</option>
-                <option value="2">Kho 2 - Cửa Hàng / Showroom (Lê Văn Sỹ, HCM)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Xưởng / Nhà Cung Cấp</label>
-              <input type="text" id="inbound-partner" placeholder="VD: Xưởng Da Giày Phú Xuyên, Xưởng Phúc Yên..." class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Chọn Mẫu Giày Cần Nhập (*)</label>
-            <select id="inbound-product-select" onchange="onInboundProductChange()" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-              <option value="">-- Chọn mẫu giày da --</option>
-            </select>
-          </div>
-
-          <!-- Bảng Ma Trận Kích Thước để nhập số lượng -->
-          <div id="inbound-matrix-box" class="hidden bg-slate-50 rounded-xl p-4 border border-slate-200">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Điền số lượng từng size cần nhập:</span>
-              <span class="text-xs text-slate-500">Đơn vị: Đôi</span>
-            </div>
-            
-            <div class="grid grid-cols-7 gap-2 text-center">
-              <div class="bg-white p-2 rounded-lg border border-slate-200">
-                <span class="block text-xs font-bold text-slate-600 mb-1">Size 38</span>
-                <input type="number" min="0" value="0" id="inbound-qty-38" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800 mb-1">Size 39 ⭐</span>
-                <input type="number" min="0" value="0" id="inbound-qty-39" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800 mb-1">Size 40 ⭐</span>
-                <input type="number" min="0" value="0" id="inbound-qty-40" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800 mb-1">Size 41 ⭐</span>
-                <input type="number" min="0" value="0" id="inbound-qty-41" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800 mb-1">Size 42 ⭐</span>
-                <input type="number" min="0" value="0" id="inbound-qty-42" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="bg-white p-2 rounded-lg border border-slate-200">
-                <span class="block text-xs font-bold text-slate-600 mb-1">Size 43</span>
-                <input type="number" min="0" value="0" id="inbound-qty-43" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="bg-white p-2 rounded-lg border border-slate-200">
-                <span class="block text-xs font-bold text-slate-600 mb-1">Size 44</span>
-                <input type="number" min="0" value="0" id="inbound-qty-44" oninput="calcInboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-emerald-500 focus:outline-none" />
-              </div>
-            </div>
-
-            <!-- Total Preview -->
-            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-sm">
-              <span class="text-slate-600">Tổng số lượng nhập: <strong id="inbound-summary-qty" class="text-emerald-600 text-base font-bold">0</strong> đôi</span>
-              <span class="text-slate-600">Tổng giá trị nhập: <strong id="inbound-summary-amt" class="text-slate-900 text-base font-bold">0 đ</strong></span>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Ghi chú phiếu nhập</label>
-            <textarea id="inbound-notes" rows="2" placeholder="VD: Hàng lô 1 tháng 9, kiểm đếm đủ bao bì hộp túi..." class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
-          </div>
-
-          <div class="flex justify-end space-x-3 pt-2">
-            <button type="button" onclick="switchTab('inventory')" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100">
-              Hủy
-            </button>
-            <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow transition-all flex items-center space-x-2">
-              <i data-lucide="check" class="w-4 h-4"></i>
-              <span>Hoàn Tất Nhập Kho</span>
-            </button>
-          </div>
-        </form>
-      </div>
     </section>
 
     <!-- ================= TAB 4: OUTBOUND (XUẤT BÁN) ================= -->
@@ -522,18 +444,150 @@
             <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
           </div>
           <div>
-            <h2 class="text-lg font-bold text-slate-900">Tạo Phiếu Xuất Kho / Bán Hàng</h2>
-            <p class="text-xs text-slate-500">Xuất bán lẻ tại showroom, đóng gói giao đơn hàng online hoặc gửi đại lý</p>
+            <h2 class="text-lg font-bold text-slate-900">Nhập Liệu Toàn Năng &amp; Tạo Phiếu Kho</h2>
+            <p class="text-xs text-slate-500">Tự động nhận diện và tạo phiếu Xuất bán, Nhập hàng, Chuyển kho chỉ với 1 ô gõ tự do</p>
           </div>
         </div>
+
+        <!-- ================= Ô NHẬP LIỆU TOÀN NĂNG (XUẤT BÁN / NHẬP HÀNG / CHUYỂN KHO) ================= -->
+        <div class="bg-gradient-to-br from-amber-500/10 via-indigo-500/5 to-emerald-500/10 rounded-2xl p-6 shadow-sm border-2 border-amber-400 mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-amber-200/80 mb-4 gap-2">
+            <div class="flex items-center space-x-3">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-md">
+                <i data-lucide="sparkles" class="w-6 h-6 text-slate-950"></i>
+              </div>
+              <div>
+                <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2 flex-wrap">
+                  <span>Ô Nhập Liệu Toàn Năng (1 Ô Duy Nhất)</span>
+                  <span id="sb-type-badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300">Xuất Bán</span>
+                  <span id="sb-platform-badge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-300"></span>
+                  <span id="sb-purchase-badge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300"></span>
+                </h2>
+                <p class="text-xs text-slate-600">Tự động nhận diện Tên, SĐT, Địa chỉ, Mã giày, Size, Giá (tự đổi nghìn đ), Nền tảng &amp; Kho. Hỗ trợ cả <strong>Xuất bán</strong>, <strong>Nhập hàng</strong> &amp; <strong>Chuyển kho</strong>!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Single Box Input Area -->
+          <div class="space-y-3">
+            <div class="relative">
+              <textarea id="single-box-input" rows="2" 
+                placeholder="Dán hoặc gõ nội dung tự do (ví dụ: WTN 38 5 đôi. 40 3 đôi 43 2 đôi vào cửa hàng hoặc Trần Minh Trí, 0344117974, 103/1 Cù Chính Lan... CTD 43 890K Page kho tổng)"
+                class="w-full py-3.5 px-4 pr-12 bg-white border-2 border-amber-300 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none shadow-inner resize-none text-slate-900 placeholder:text-slate-400 leading-relaxed"></textarea>
+              <button type="button" onclick="clearSingleBox()" title="Xóa trắng ô nhập" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Gợi ý mẫu câu nhanh cho cả 3 nghiệp vụ -->
+            <div class="space-y-1.5 text-[11px] text-slate-500">
+              <div class="flex items-center gap-1.5 font-semibold text-amber-900">
+                <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-600"></i>
+                <span>Bấm thử mẫu câu nhanh:</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="fillSampleInput('WTN 38 5 đôi. 40 3 đôi 43 2 đôi vào cửa hàng')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-[11px] shadow-sm transition-all text-left">
+                  <span class="font-bold text-emerald-600">[Nhập Nhiều Size]</span> WTN 38 5 đôi. 40 3 đôi 43 2 đôi vào cửa hàng
+                </button>
+                <button type="button" onclick="fillSampleInput('Trần Minh Trí, 0344117974, 103/1 Cù Chính Lan, Thanh Khê, Đà Nẵng CTD 43 890K Page kho tổng')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-50 border border-rose-200 text-rose-800 font-mono text-[11px] shadow-sm transition-all text-left">
+                  <span class="font-bold text-rose-600">[Kho Tổng]</span> Trần Minh Trí, 0344117974... CTD 43 890K Page kho tổng
+                </button>
+                <button type="button" onclick="fillSampleInput('Trần Minh Trí, 0344117974, 103/1 Cù Chính Lan, Thanh Khê, Đà Nẵng CTD 43 890K Page cửa hàng')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-50 border border-rose-200 text-rose-800 font-mono text-[11px] shadow-sm transition-all text-left">
+                  <span class="font-bold text-rose-600">[Cửa Hàng]</span> Trần Minh Trí, 0344117974... CTD 43 890K Page cửa hàng
+                </button>
+                <button type="button" onclick="fillSampleInput('nhập 1 đôi oxd size 41 vào kho tổng giá 450')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-[11px] shadow-sm transition-all text-left">
+                  <span class="font-bold text-emerald-600">[Nhập 1 Đôi]</span> nhập 1 đôi oxd size 41 vào kho tổng giá 450
+                </button>
+                <button type="button" onclick="fillSampleInput('chuyển 1 đôi oxd size 41 từ kho cửa hàng về kho tổng')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-sky-50 border border-sky-200 text-sky-800 font-mono text-[11px] shadow-sm transition-all text-left">
+                  <span class="font-bold text-sky-600">[Chuyển Kho]</span> chuyển 1 đôi oxd size 41 từ kho cửa hàng về kho tổng
+                </button>
+              </div>
+            </div>
+
+            <!-- Live Analysis & Breakdown Preview -->
+            <div id="single-box-preview" class="hidden bg-white rounded-2xl p-4 border border-amber-300 shadow-md space-y-3 transition-all">
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700 border-b border-slate-100 pb-2">
+                <span class="flex items-center gap-1.5 text-amber-900">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+                  Thông tin tự động phân tích:
+                </span>
+                <span id="sb-status-badge" class="px-2 py-0.5 rounded text-[11px] font-bold"></span>
+              </div>
+
+              <!-- Grid thông tin khách hàng / đối tác -->
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="text-[10px] text-slate-400 font-semibold block uppercase">Khách / Đối Tác</span>
+                  <span id="sb-name" class="font-bold text-slate-900 block truncate">-</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="text-[10px] text-slate-400 font-semibold block uppercase">Số Điện Thoại</span>
+                  <span id="sb-phone" class="font-bold text-slate-900 font-mono block truncate">-</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 sm:col-span-2">
+                  <span class="text-[10px] text-slate-400 font-semibold block uppercase">Địa Chỉ Giao Hàng</span>
+                  <span id="sb-address" class="font-bold text-slate-900 block truncate">-</span>
+                </div>
+              </div>
+
+              <!-- Grid chi tiết sản phẩm, giá, kho -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
+                  <span class="text-[10px] text-amber-800 font-semibold block uppercase">Mẫu Giày &amp; Size</span>
+                  <span id="sb-product" class="font-bold text-slate-900 block">-</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
+                  <span id="sb-qty-price-label" class="text-[10px] text-amber-800 font-semibold block uppercase">Số Lượng &amp; Đơn Giá</span>
+                  <span id="sb-qty-price" class="font-bold text-slate-900 block">-</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
+                  <span class="text-[10px] text-amber-800 font-semibold block uppercase">Kho Hàng &amp; Tồn Kho</span>
+                  <span id="sb-warehouse" class="font-bold text-slate-900 block">-</span>
+                </div>
+                <div id="sb-total-box" class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 transition-colors">
+                  <span id="sb-total-label" class="text-[10px] text-emerald-800 font-semibold block uppercase">Tổng Tiền Phiếu</span>
+                  <span id="sb-total" class="font-extrabold text-emerald-700 text-sm block">0 đ</span>
+                </div>
+              </div>
+
+              <div id="sb-error-box" class="hidden p-2.5 rounded-xl text-xs font-medium"></div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-xs text-slate-500 hidden sm:inline">💡 Bạn có thể gõ xong rồi bấm <strong>Enter</strong> để thực hiện ngay</span>
+              <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <button type="button" onclick="clearSingleBox()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition-colors">
+                  Xóa ô
+                </button>
+                <button type="button" id="sb-submit-btn" onclick="submitSingleBoxTransaction()" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span id="sb-submit-text">Tạo Phiếu Ngay</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COLLAPSIBLE: FORM NHẬP THỦ CÔNG TỪNG Ô (NẾU CẦN) -->
+        <details class="group bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm transition-all mb-4">
+          <summary class="cursor-pointer font-bold text-xs text-slate-600 hover:text-slate-900 flex items-center justify-between list-none">
+            <span class="flex items-center space-x-2">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4 text-slate-400 group-open:text-amber-600"></i>
+              <span>Hoặc nhập thủ công từng ô (biểu mẫu chi tiết chọn từng size trong ma trận)</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <div class="pt-5 mt-4 border-t border-slate-100">
 
         <form id="outbound-form" onsubmit="submitOutboundTransaction(event)" class="space-y-5">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Kho Xuất Hàng (*)</label>
               <select id="outbound-source-wh" onchange="onOutboundWarehouseChange()" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
-                <option value="2">Kho 2 - Cửa Hàng / Showroom (Lê Văn Sỹ, HCM)</option>
-                <option value="1">Kho 1 - Kho Tổng (Đống Đa, Hà Nội)</option>
+                <option value="2">Kho 2 - Cửa Hàng / Showroom</option>
+                <option value="1">Kho 1 - Kho Tổng</option>
               </select>
             </div>
 
@@ -557,32 +611,32 @@
               <span class="text-xs text-rose-600 font-semibold" id="outbound-stock-warning"></span>
             </div>
             
-            <div class="grid grid-cols-7 gap-2 text-center">
+            <div class="grid grid-cols-5 md:grid-cols-10 gap-2 text-center">
               <!-- Size 38 to 44 -->
               <div class="bg-white p-2 rounded-lg border border-slate-200">
                 <span class="block text-xs font-bold text-slate-600">Size 38</span>
                 <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-38">Tồn: 0</span>
                 <input type="number" min="0" value="0" id="outbound-qty-38" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
               </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 39 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="outbound-cur-39">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="outbound-qty-39" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 39</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-39">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-39" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
               </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 40 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="outbound-cur-40">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="outbound-qty-40" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 40</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-40">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-40" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
               </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 41 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="outbound-cur-41">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="outbound-qty-41" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 41</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-41">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-41" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
               </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 42 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="outbound-cur-42">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="outbound-qty-42" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 42</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-42">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-42" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
               </div>
               <div class="bg-white p-2 rounded-lg border border-slate-200">
                 <span class="block text-xs font-bold text-slate-600">Size 43</span>
@@ -593,6 +647,21 @@
                 <span class="block text-xs font-bold text-slate-600">Size 44</span>
                 <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-44">Tồn: 0</span>
                 <input type="number" min="0" value="0" id="outbound-qty-44" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              </div>
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 45</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-45">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-45" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              </div>
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 46</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-46">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-46" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
+              </div>
+              <div class="bg-white p-2 rounded-lg border border-slate-200">
+                <span class="block text-xs font-bold text-slate-600">Size 47</span>
+                <span class="block text-[11px] text-slate-400 mb-1" id="outbound-cur-47">Tồn: 0</span>
+                <input type="number" min="0" value="0" id="outbound-qty-47" oninput="calcOutboundTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-rose-500 focus:outline-none" />
               </div>
             </div>
 
@@ -618,117 +687,12 @@
             </button>
           </div>
         </form>
+          </div>
+        </details>
       </div>
     </section>
 
-    <!-- ================= TAB 5: TRANSFER (CHUYỂN KHO 1 ⇄ KHO 2) ================= -->
-    <section id="view-transfer" class="hidden max-w-4xl mx-auto space-y-6">
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
-        <div class="flex items-center space-x-3 pb-4 border-b border-slate-100 mb-5">
-          <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold">
-            <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-bold text-slate-900">Phiếu Điều Chuyển Kho Hàng</h2>
-            <p class="text-xs text-slate-500">Chuyển các size thừa/thiếu giữa Kho 1 (Kho Tổng) và Kho 2 (Cửa Hàng Showroom)</p>
-          </div>
-        </div>
-
-        <form id="transfer-form" onsubmit="submitTransferTransaction(event)" class="space-y-5">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Kho Gửi (Xuất đi) (*)</label>
-              <select id="transfer-source-wh" onchange="onTransferWarehouseChange()" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                <option value="1">Kho 1 - Kho Tổng (Đống Đa, Hà Nội)</option>
-                <option value="2">Kho 2 - Cửa Hàng / Showroom (Lê Văn Sỹ, HCM)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Kho Nhận (Bổ sung vào) (*)</label>
-              <select id="transfer-target-wh" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-sky-500 focus:outline-none">
-                <option value="2">Kho 2 - Cửa Hàng / Showroom (Lê Văn Sỹ, HCM)</option>
-                <option value="1">Kho 1 - Kho Tổng (Đống Đa, Hà Nội)</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Chọn Mẫu Giày Cần Chuyển (*)</label>
-            <select id="transfer-product-select" onchange="onTransferProductChange()" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-sky-500 focus:outline-none">
-              <option value="">-- Chọn mẫu giày da --</option>
-            </select>
-          </div>
-
-          <!-- Ma trận size chuyển -->
-          <div id="transfer-matrix-box" class="hidden bg-slate-50 rounded-xl p-4 border border-slate-200">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Số lượng từng size cần chuyển (Dưới là tồn tại kho gửi):</span>
-              <span class="text-xs text-sky-600 font-semibold" id="transfer-stock-warning"></span>
-            </div>
-            
-            <div class="grid grid-cols-7 gap-2 text-center">
-              <div class="bg-white p-2 rounded-lg border border-slate-200">
-                <span class="block text-xs font-bold text-slate-600">Size 38</span>
-                <span class="block text-[11px] text-slate-400 mb-1" id="transfer-cur-38">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-38" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 39 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="transfer-cur-39">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-39" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 40 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="transfer-cur-40">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-40" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 41 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="transfer-cur-41">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-41" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-              <div class="bg-amber-50/60 p-2 rounded-lg border border-amber-300">
-                <span class="block text-xs font-bold text-amber-800">Size 42 ⭐</span>
-                <span class="block text-[11px] text-amber-700 mb-1" id="transfer-cur-42">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-42" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-amber-300 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-              <div class="bg-white p-2 rounded-lg border border-slate-200">
-                <span class="block text-xs font-bold text-slate-600">Size 43</span>
-                <span class="block text-[11px] text-slate-400 mb-1" id="transfer-cur-43">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-43" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-              <div class="bg-white p-2 rounded-lg border border-slate-200">
-                <span class="block text-xs font-bold text-slate-600">Size 44</span>
-                <span class="block text-[11px] text-slate-400 mb-1" id="transfer-cur-44">Tồn: 0</span>
-                <input type="number" min="0" value="0" id="transfer-qty-44" oninput="calcTransferTotal()" class="w-full text-center py-1.5 border border-slate-200 rounded text-sm font-semibold focus:ring-sky-500 focus:outline-none" />
-              </div>
-            </div>
-
-            <!-- Transfer Summary -->
-            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-sm">
-              <span class="text-slate-600">Tổng số lượng chuyển: <strong id="transfer-summary-qty" class="text-sky-600 text-base font-bold">0</strong> đôi</span>
-              <span class="text-xs text-slate-500">Kho gửi sẽ tự động trừ đi, Kho nhận sẽ tự động cộng thêm</span>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Ghi chú điều chuyển</label>
-            <textarea id="transfer-notes" rows="2" placeholder="VD: Bổ sung size 40, 41 cho showroom đón khách cuối tuần..." class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
-          </div>
-
-          <div class="flex justify-end space-x-3 pt-2">
-            <button type="button" onclick="switchTab('inventory')" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100">
-              Hủy
-            </button>
-            <button type="submit" class="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold shadow transition-all flex items-center space-x-2">
-              <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
-              <span>Thực Hiện Chuyển Kho</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
+    <!-- ================= TAB 6: AUDIT (KIỂM KÊ KHO) ================= -->
 
     <!-- ================= TAB 6: AUDIT (KIỂM KÊ KHO) ================= -->
     <section id="view-audit" class="hidden max-w-4xl mx-auto space-y-6">
@@ -748,8 +712,8 @@
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Kho Cần Kiểm Kê (*)</label>
               <select id="audit-target-wh" onchange="onAuditWarehouseChange()" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
-                <option value="1">Kho 1 - Kho Tổng (Đống Đa, Hà Nội)</option>
-                <option value="2">Kho 2 - Cửa Hàng / Showroom (Lê Văn Sỹ, HCM)</option>
+                <option value="1">Kho 1 - Kho Tổng</option>
+                <option value="2">Kho 2 - Cửa Hàng / Showroom</option>
               </select>
             </div>
 
@@ -785,6 +749,9 @@
                     <th class="py-2 px-2">42</th>
                     <th class="py-2 px-2">43</th>
                     <th class="py-2 px-2">44</th>
+                    <th class="py-2 px-2">45</th>
+                    <th class="py-2 px-2">46</th>
+                    <th class="py-2 px-2">47</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -797,6 +764,9 @@
                     <td id="audit-sys-42" class="font-bold text-slate-700">0</td>
                     <td id="audit-sys-43" class="font-bold text-slate-700">0</td>
                     <td id="audit-sys-44" class="font-bold text-slate-700">0</td>
+                    <td id="audit-sys-45" class="font-bold text-slate-700">0</td>
+                    <td id="audit-sys-46" class="font-bold text-slate-700">0</td>
+                    <td id="audit-sys-47" class="font-bold text-slate-700">0</td>
                   </tr>
                   <tr class="bg-purple-50/50">
                     <td class="py-2 px-2 font-semibold text-left text-purple-900">Đếm Thực Tế (*)</td>
@@ -807,6 +777,9 @@
                     <td><input type="number" min="0" value="0" id="audit-act-42" oninput="calcAuditDiff()" class="w-14 text-center py-1 border border-purple-300 rounded font-bold" /></td>
                     <td><input type="number" min="0" value="0" id="audit-act-43" oninput="calcAuditDiff()" class="w-14 text-center py-1 border border-purple-300 rounded font-bold" /></td>
                     <td><input type="number" min="0" value="0" id="audit-act-44" oninput="calcAuditDiff()" class="w-14 text-center py-1 border border-purple-300 rounded font-bold" /></td>
+                    <td><input type="number" min="0" value="0" id="audit-act-45" oninput="calcAuditDiff()" class="w-14 text-center py-1 border border-purple-300 rounded font-bold" /></td>
+                    <td><input type="number" min="0" value="0" id="audit-act-46" oninput="calcAuditDiff()" class="w-14 text-center py-1 border border-purple-300 rounded font-bold" /></td>
+                    <td><input type="number" min="0" value="0" id="audit-act-47" oninput="calcAuditDiff()" class="w-14 text-center py-1 border border-purple-300 rounded font-bold" /></td>
                   </tr>
                   <tr class="bg-white">
                     <td class="py-2 px-2 font-semibold text-left text-slate-500">Chênh Lệch</td>
@@ -817,6 +790,9 @@
                     <td id="audit-diff-42" class="font-bold text-slate-500">0</td>
                     <td id="audit-diff-43" class="font-bold text-slate-500">0</td>
                     <td id="audit-diff-44" class="font-bold text-slate-500">0</td>
+                    <td id="audit-diff-45" class="font-bold text-slate-500">0</td>
+                    <td id="audit-diff-46" class="font-bold text-slate-500">0</td>
+                    <td id="audit-diff-47" class="font-bold text-slate-500">0</td>
                   </tr>
                 </tbody>
               </table>
@@ -896,40 +872,72 @@
 
     <!-- ================= TAB 8: TRANSACTION HISTORY ================= -->
     <section id="view-history" class="hidden space-y-5">
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="flex items-center space-x-3 w-full sm:w-auto">
-          <h3 class="font-bold text-slate-900 text-base">Sổ Lịch Sử Xuất - Nhập - Chuyển Kho</h3>
-          <select id="history-type-filter" onchange="loadTransactionHistory()" class="py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+      <!-- Toolbar với tìm kiếm & lọc đa năng -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col lg:flex-row items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto flex-1">
+          <div class="flex items-center space-x-2 mr-1">
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+              <i data-lucide="history" class="w-4 h-4"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base whitespace-nowrap">Sổ Giao Dịch</h3>
+          </div>
+
+          <!-- Ô tìm kiếm nhanh mã phiếu, khách hàng, sđt -->
+          <div class="relative flex-1 min-w-[220px] max-w-sm">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+            <input id="history-search-input" oninput="filterTransactionHistory()" type="text" placeholder="Tìm theo mã phiếu, khách, SĐT, mã giày..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none" />
+          </div>
+
+          <!-- Bộ lọc loại phiếu -->
+          <select id="history-type-filter" onchange="loadTransactionHistory()" class="py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
             <option value="">Tất cả loại giao dịch</option>
-            <option value="INBOUND">Phiếu Nhập (Inbound)</option>
-            <option value="OUTBOUND">Phiếu Xuất (Outbound)</option>
+            <option value="OUTBOUND">Phiếu Xuất (Bán Hàng)</option>
+            <option value="INBOUND">Phiếu Nhập (Nhập Hàng)</option>
             <option value="TRANSFER">Phiếu Chuyển Kho</option>
             <option value="AUDIT">Phiếu Kiểm Kê</option>
           </select>
+
+          <!-- Bộ lọc trạng thái -->
+          <select id="history-status-filter" onchange="filterTransactionHistory()" class="py-1.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <option value="">Tất cả trạng thái</option>
+            <option value="SUCCESS">Thành công</option>
+            <option value="CANCELLED">Đã hủy đơn</option>
+          </select>
         </div>
 
-        <button onclick="downloadExcelReport()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl flex items-center space-x-1.5 transition-all">
-          <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
-          <span>Xuất File Excel</span>
-        </button>
+        <div class="flex items-center space-x-2 w-full lg:w-auto justify-end">
+          <button onclick="loadTransactionHistory()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl flex items-center space-x-1.5 transition-all" title="Tải lại dữ liệu">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Làm Mới</span>
+          </button>
+          <button onclick="downloadExcelReport()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 shadow-sm transition-all">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Xuất Phiếu Xuất (Sheet Xuất)</span>
+          </button>
+        </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+      <!-- Bảng lịch sử kẻ ô hàng lối rõ ràng -->
+      <div class="bg-white rounded-2xl shadow-sm border-2 border-slate-300 overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <table class="w-full text-left border-collapse border border-slate-300 text-xs">
             <thead>
-              <tr class="bg-slate-900 text-white font-semibold text-[11px] uppercase tracking-wider">
-                <th class="py-3.5 px-4">Mã Phiếu</th>
-                <th class="py-3.5 px-3">Loại Phiếu</th>
-                <th class="py-3.5 px-3">Thời Gian</th>
-                <th class="py-3.5 px-3">Kho Liên Quan</th>
-                <th class="py-3.5 px-3">Đối Tác / Khách</th>
-                <th class="py-3.5 px-3 text-center">Số Lượng</th>
-                <th class="py-3.5 px-3 text-right">Tổng Tiền</th>
-                <th class="py-3.5 px-4">Ghi Chú & Chi Tiết</th>
+              <tr class="bg-slate-900 text-white font-bold text-[11px] uppercase tracking-wider">
+                <th class="py-3 px-2 text-center border-b-2 border-r border-slate-700 w-12 bg-slate-950">STT</th>
+                <th class="py-3 px-3.5 border-b-2 border-r border-slate-700 min-w-[145px]">Mã Phiếu</th>
+                <th class="py-3 px-2.5 border-b-2 border-r border-slate-700 text-center min-w-[95px]">Loại Phiếu</th>
+                <th class="py-3 px-2.5 border-b-2 border-r border-slate-700 text-center min-w-[100px]">Trạng Thái</th>
+                <th class="py-3 px-2.5 border-b-2 border-r border-slate-700 text-center min-w-[85px]">Nền Tảng</th>
+                <th class="py-3 px-3 border-b-2 border-r border-slate-700 min-w-[125px]">Thời Gian</th>
+                <th class="py-3 px-3 border-b-2 border-r border-slate-700 min-w-[140px]">Kho Hàng</th>
+                <th class="py-3 px-3.5 border-b-2 border-r border-slate-700 min-w-[185px]">Khách Hàng / Đối Tác</th>
+                <th class="py-3 px-2.5 border-b-2 border-r border-slate-700 text-center min-w-[80px]">Số Lượng</th>
+                <th class="py-3 px-3 border-b-2 border-r border-slate-700 text-right min-w-[110px]">Tổng Tiền</th>
+                <th class="py-3 px-3.5 border-b-2 border-r border-slate-700 min-w-[210px]">Chi Tiết Mặt Hàng</th>
+                <th class="py-3 px-3 border-b-2 border-slate-700 text-center min-w-[95px]">Thao Tác</th>
               </tr>
             </thead>
-            <tbody id="history-table-body" class="divide-y divide-slate-100">
+            <tbody id="history-table-body" class="divide-y divide-slate-200">
               <!-- Render by JavaScript -->
             </tbody>
           </table>
@@ -1011,34 +1019,40 @@
         <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-700 uppercase">Khởi tạo tồn kho ban đầu (nếu có):</span>
-            <span class="text-[11px] text-slate-500">Mặc định dải size: 38, 39, 40, 41, 42, 43, 44</span>
+            <span class="text-[11px] text-slate-500">Mặc định dải size: 38, 39, 40, 41, 42, 43, 44, 45, 46, 47</span>
           </div>
 
           <!-- Kho 1 row -->
           <div>
             <span class="text-xs font-semibold text-blue-700 block mb-1">Số lượng nhập vào Kho 1 (Kho Tổng):</span>
-            <div class="grid grid-cols-7 gap-1.5 text-center text-xs">
+            <div class="grid grid-cols-5 md:grid-cols-10 gap-1.5 text-center text-xs">
               <div><span class="text-[10px] text-slate-500">38</span><input type="number" min="0" value="2" id="np-k1-38" class="w-full py-1 text-center border rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">39⭐</span><input type="number" min="0" value="5" id="np-k1-39" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">40⭐</span><input type="number" min="0" value="8" id="np-k1-40" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">41⭐</span><input type="number" min="0" value="7" id="np-k1-41" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">42⭐</span><input type="number" min="0" value="5" id="np-k1-42" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">39</span><input type="number" min="0" value="5" id="np-k1-39" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">40</span><input type="number" min="0" value="8" id="np-k1-40" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">41</span><input type="number" min="0" value="7" id="np-k1-41" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">42</span><input type="number" min="0" value="5" id="np-k1-42" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
               <div><span class="text-[10px] text-slate-500">43</span><input type="number" min="0" value="3" id="np-k1-43" class="w-full py-1 text-center border rounded font-semibold" /></div>
               <div><span class="text-[10px] text-slate-500">44</span><input type="number" min="0" value="1" id="np-k1-44" class="w-full py-1 text-center border rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-slate-500">45</span><input type="number" min="0" value="0" id="np-k1-45" class="w-full py-1 text-center border rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-slate-500">46</span><input type="number" min="0" value="0" id="np-k1-46" class="w-full py-1 text-center border rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-slate-500">47</span><input type="number" min="0" value="0" id="np-k1-47" class="w-full py-1 text-center border rounded font-semibold" /></div>
             </div>
           </div>
 
           <!-- Kho 2 row -->
           <div>
             <span class="text-xs font-semibold text-indigo-700 block mb-1">Số lượng nhập vào Kho 2 (Cửa Hàng):</span>
-            <div class="grid grid-cols-7 gap-1.5 text-center text-xs">
+            <div class="grid grid-cols-5 md:grid-cols-10 gap-1.5 text-center text-xs">
               <div><span class="text-[10px] text-slate-500">38</span><input type="number" min="0" value="1" id="np-k2-38" class="w-full py-1 text-center border rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">39⭐</span><input type="number" min="0" value="2" id="np-k2-39" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">40⭐</span><input type="number" min="0" value="3" id="np-k2-40" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">41⭐</span><input type="number" min="0" value="3" id="np-k2-41" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
-              <div><span class="text-[10px] text-amber-700">42⭐</span><input type="number" min="0" value="2" id="np-k2-42" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">39</span><input type="number" min="0" value="2" id="np-k2-39" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">40</span><input type="number" min="0" value="3" id="np-k2-40" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">41</span><input type="number" min="0" value="3" id="np-k2-41" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-amber-700">42</span><input type="number" min="0" value="2" id="np-k2-42" class="w-full py-1 text-center border border-amber-300 rounded font-semibold" /></div>
               <div><span class="text-[10px] text-slate-500">43</span><input type="number" min="0" value="1" id="np-k2-43" class="w-full py-1 text-center border rounded font-semibold" /></div>
               <div><span class="text-[10px] text-slate-500">44</span><input type="number" min="0" value="0" id="np-k2-44" class="w-full py-1 text-center border rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-slate-500">45</span><input type="number" min="0" value="0" id="np-k2-45" class="w-full py-1 text-center border rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-slate-500">46</span><input type="number" min="0" value="0" id="np-k2-46" class="w-full py-1 text-center border rounded font-semibold" /></div>
+              <div><span class="text-[10px] text-slate-500">47</span><input type="number" min="0" value="0" id="np-k2-47" class="w-full py-1 text-center border rounded font-semibold" /></div>
             </div>
           </div>
         </div>
@@ -1104,6 +1118,8 @@
 
   <!-- APPLICATION LOGIC JAVASCRIPT -->
   <script>
+    const SUPPORTED_SIZES = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
+
     // State toàn cục
     let globalWarehouseId = null; // null = cả 2 kho, 1 = Kho 1, 2 = Kho 2
     let allProducts = [];
@@ -1116,6 +1132,8 @@
       loadNetworkInfo();
       refreshDashboard();
       loadProducts();
+      initSingleBoxListeners();
+
     });
 
     // Format tiền tệ VNĐ
@@ -1147,7 +1165,8 @@
 
     // Chuyển đổi tab
     function switchTab(tabId) {
-      const tabs = ['dashboard', 'inventory', 'inbound', 'outbound', 'transfer', 'audit', 'scanner', 'history'];
+      if (tabId === 'inbound' || tabId === 'transfer') tabId = 'outbound';
+      const tabs = ['dashboard', 'inventory', 'outbound', 'audit', 'scanner', 'history'];
       tabs.forEach(t => {
         const viewEl = document.getElementById(`view-${t}`);
         const btnEl = document.getElementById(`tab-btn-${t}`);
@@ -1170,9 +1189,7 @@
       // Kích hoạt load dữ liệu theo tab
       if (tabId === 'dashboard') refreshDashboard();
       if (tabId === 'inventory') loadProducts();
-      if (tabId === 'inbound') populateProductDropdown('inbound-product-select');
       if (tabId === 'outbound') populateProductDropdown('outbound-product-select');
-      if (tabId === 'transfer') populateProductDropdown('transfer-product-select');
       if (tabId === 'audit') populateProductDropdown('audit-product-select');
       if (tabId === 'history') loadTransactionHistory();
 
@@ -1200,9 +1217,9 @@
 
       const lbl = document.getElementById("inv-current-wh-label");
       if (lbl) {
-        if (whId === null) lbl.textContent = "Cả 2 Kho (Tổng tồn hệ thống)";
-        if (whId === 1) lbl.textContent = "Kho 1 (Kho Tổng - Hà Nội)";
-        if (whId === 2) lbl.textContent = "Kho 2 (Cửa Hàng / Showroom - HCM)";
+        if (whId === null) lbl.textContent = "Cả 2 Kho";
+        if (whId === 1) lbl.textContent = "Kho 1 - Kho Tổng";
+        if (whId === 2) lbl.textContent = "Kho 2 - Cửa Hàng / Showroom";
       }
 
       loadProducts();
@@ -1289,21 +1306,28 @@
               label = 'Kiểm Kê';
             }
 
+            const isCancelled = tx.status === "CANCELLED";
+            const statusBadge = isCancelled ? `<span class="text-[10px] px-1.5 py-0.2 rounded font-bold bg-rose-100 text-rose-800 border border-rose-200">Đã Hủy</span>` : "";
+            const platformBadge = tx.platform && tx.platform !== "Khác" ? `<span class="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-slate-200 text-slate-700">${tx.platform}</span>` : "";
+            const strikeCls = isCancelled ? "line-through text-slate-400" : "";
+
             row.innerHTML = `
               <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 rounded-lg ${colorCls} flex items-center justify-center font-bold">
                   <i data-lucide="${icon}" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <div class="flex items-center space-x-1.5">
-                    <span class="font-bold text-slate-900">${tx.code}</span>
+                  <div class="flex items-center space-x-1.5 flex-wrap">
+                    <span class="font-bold text-slate-900 ${strikeCls}">${tx.code}</span>
                     <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${colorCls}">${label}</span>
+                    ${platformBadge}
+                    ${statusBadge}
                   </div>
                   <p class="text-[11px] text-slate-500 mt-0.5">${tx.partner_name || 'Nội bộ'} • ${tx.notes || ''}</p>
                 </div>
               </div>
               <div class="text-right">
-                <span class="font-bold text-slate-800">${tx.total_quantity} đôi</span>
+                <span class="font-bold text-slate-800 ${strikeCls}">${tx.total_quantity} đôi</span>
                 <p class="text-[11px] text-slate-400">${new Date(tx.created_at).toLocaleDateString('vi-VN')}</p>
               </div>
             `;
@@ -1332,36 +1356,281 @@
       }
     }
 
-    function filterInventoryTable() {
-      const query = (document.getElementById("inv-search-input").value || "").toLowerCase().trim();
-      const cat = document.getElementById("inv-category-filter").value;
+    let currentFilterTargetSize = null;
 
-      const filtered = allProducts.filter(p => {
-        const matchQuery = !query || 
-          p.code.toLowerCase().includes(query) || 
-          p.name.toLowerCase().includes(query) || 
-          (p.material && p.material.toLowerCase().includes(query)) ||
-          (p.color && p.color.toLowerCase().includes(query));
-
-        const matchCat = !cat || p.category === cat;
-        return matchQuery && matchCat;
-      });
-
-      renderInventoryTable(filtered);
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      })[m]);
     }
 
-    function renderInventoryTable(products) {
+    function parseInventorySearchQuery(rawQuery) {
+      if (!rawQuery) return { keyword: "", targetSize: null };
+      let text = rawQuery.trim();
+      let targetSize = null;
+
+      // Tìm size từ 38 đến 47
+      const m = text.match(/(?:size|sz|cỡ)?\s*\b(3[8-9]|4[0-7])\b/i);
+      if (m) {
+        targetSize = parseInt(m[1]);
+        text = (text.substring(0, m.index) + " " + text.substring(m.index + m[0].length)).trim();
+      }
+      return { keyword: text.toLowerCase().replace(/\s+/g, ' ').trim(), targetSize };
+    }
+
+    function setQuickInventorySearch(val) {
+      const input = document.getElementById("inv-search-input");
+      if (input) {
+        input.value = val;
+        input.focus();
+        filterInventoryTable();
+      }
+    }
+
+    function clearInventorySearch() {
+      const input = document.getElementById("inv-search-input");
+      if (input) {
+        input.value = "";
+        input.focus();
+        filterInventoryTable();
+      }
+    }
+
+    function fillAndGoToSingleBox(text) {
+      switchTab('outbound');
+      const box = document.getElementById("single-box-input");
+      if (box) {
+        box.value = text;
+        box.focus();
+        triggerSingleBoxParse();
+      }
+    }
+
+    function renderQuickSearchBanner(rawInput, keyword, targetSize, filtered) {
+      const box = document.getElementById("inv-quick-search-box");
+      if (!box) return;
+
+      if (!targetSize) {
+        box.classList.add("hidden");
+        box.innerHTML = "";
+        return;
+      }
+
+      if (filtered.length === 0) {
+        box.className = "bg-rose-50 border border-rose-200 rounded-2xl p-4 shadow-sm text-xs text-rose-800 flex items-center justify-between";
+        box.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <i data-lucide="alert-circle" class="w-5 h-5 text-rose-600"></i>
+            <span>Không tìm thấy mẫu giày nào phù hợp với từ khóa "<strong>${escapeHtml(rawInput)}</strong>".</span>
+          </div>
+          <button onclick="clearInventorySearch()" class="text-rose-700 font-bold underline hover:text-rose-900">Xóa tìm kiếm</button>
+        `;
+        box.classList.remove("hidden");
+        lucide.createIcons();
+        return;
+      }
+
+      // Tìm sản phẩm khớp chính xác mã, hoặc sản phẩm đầu tiên nếu chỉ có 1 kết quả
+      const exactMatch = filtered.find(p => p.code.toLowerCase() === keyword) || (filtered.length === 1 ? filtered[0] : null);
+
+      if (exactMatch) {
+        const p = exactMatch;
+        const v = p.variants.find(x => x.size === targetSize);
+        const wh1 = v ? v.stock_wh1 : 0; // Kho Tổng (Ở Nhà)
+        const wh2 = v ? v.stock_wh2 : 0; // Cửa Hàng (Showroom)
+        const total = wh1 + wh2;
+
+        let verdictBadge = '';
+        if (wh2 > 0 && wh1 > 0) {
+          verdictBadge = `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center gap-1.5 shadow-2xs"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i> Cả 2 kho đều CÒN HÀNG (Tổng: ${total} đôi)</span>`;
+        } else if (wh2 > 0) {
+          verdictBadge = `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center gap-1.5 shadow-2xs"><i data-lucide="store" class="w-3.5 h-3.5 text-emerald-600"></i> Có sẵn tại CỬA HÀNG (${wh2} đôi) - Kho Tổng hết</span>`;
+        } else if (wh1 > 0) {
+          verdictBadge = `<span class="px-2.5 py-1 rounded-xl bg-sky-100 text-sky-800 border border-sky-300 font-bold text-xs flex items-center gap-1.5 shadow-2xs"><i data-lucide="home" class="w-3.5 h-3.5 text-sky-600"></i> Có tại KHO TỔNG (${wh1} đôi) - Cửa Hàng hết (cần chuyển)</span>`;
+        } else {
+          verdictBadge = `<span class="px-2.5 py-1 rounded-xl bg-rose-100 text-rose-800 border border-rose-300 font-bold text-xs flex items-center gap-1.5 shadow-2xs"><i data-lucide="x-circle" class="w-3.5 h-3.5 text-rose-600"></i> HẾT HÀNG TRÊN TOÀN HỆ THỐNG</span>`;
+        }
+
+        const wh2Card = wh2 > 0 
+          ? `<div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-300 shadow-2xs">
+               <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                 <i data-lucide="store" class="w-4 h-4"></i>
+               </div>
+               <div>
+                 <span class="text-[10px] uppercase font-bold text-emerald-700 block">Kho 2 (Cửa Hàng)</span>
+                 <span class="text-sm font-black text-emerald-950 leading-tight">CÒN ${wh2} ĐÔI</span>
+               </div>
+             </div>`
+          : `<div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-200">
+               <div class="w-8 h-8 rounded-lg bg-slate-200 text-slate-400 flex items-center justify-center font-bold">
+                 <i data-lucide="store" class="w-4 h-4"></i>
+               </div>
+               <div>
+                 <span class="text-[10px] uppercase font-semibold text-slate-500 block">Kho 2 (Cửa Hàng)</span>
+                 <span class="text-xs font-bold text-slate-400 leading-tight">Hết (0 đôi)</span>
+               </div>
+             </div>`;
+
+        const wh1Card = wh1 > 0 
+          ? `<div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-sky-50 border border-sky-300 shadow-2xs">
+               <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
+                 <i data-lucide="home" class="w-4 h-4"></i>
+               </div>
+               <div>
+                 <span class="text-[10px] uppercase font-bold text-sky-700 block">Kho 1 (Kho Tổng - Nhà)</span>
+                 <span class="text-sm font-black text-sky-950 leading-tight">CÒN ${wh1} ĐÔI</span>
+               </div>
+             </div>`
+          : `<div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-200">
+               <div class="w-8 h-8 rounded-lg bg-slate-200 text-slate-400 flex items-center justify-center font-bold">
+                 <i data-lucide="home" class="w-4 h-4"></i>
+               </div>
+               <div>
+                 <span class="text-[10px] uppercase font-semibold text-slate-500 block">Kho 1 (Kho Tổng - Nhà)</span>
+                 <span class="text-xs font-bold text-slate-400 leading-tight">Hết (0 đôi)</span>
+               </div>
+             </div>`;
+
+        const outboundWh = wh2 > 0 ? "cửa hàng" : "kho tổng";
+        box.className = "bg-gradient-to-r from-amber-500/10 via-amber-100/50 to-orange-500/10 border-2 border-amber-400 rounded-2xl p-4 shadow-sm";
+        box.innerHTML = `
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-12 h-12 rounded-xl bg-slate-900 text-amber-300 flex flex-col items-center justify-center font-black shadow border border-slate-700 flex-shrink-0">
+                <span class="text-[9px] uppercase tracking-wider text-slate-400 font-bold leading-none">SIZE</span>
+                <span class="text-lg leading-tight font-black">${targetSize}</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-base font-black text-slate-900 tracking-wide">${p.code}</span>
+                  <span class="text-xs px-2 py-0.5 rounded-lg bg-slate-900 text-amber-300 font-bold font-mono">Size ${targetSize}</span>
+                  <span class="text-xs text-slate-600 font-medium">${p.name} (${p.color || ''})</span>
+                </div>
+                <div class="mt-1.5 flex items-center gap-2 flex-wrap">
+                  ${verdictBadge}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              ${wh2Card}
+              ${wh1Card}
+
+              <div class="flex items-center space-x-1 pl-1">
+                <button onclick="fillAndGoToSingleBox('${p.code} ${targetSize} ${outboundWh}')" title="Xuất bán ngay mẫu này" class="px-3 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center space-x-1">
+                  <i data-lucide="minus-circle" class="w-3.5 h-3.5"></i>
+                  <span>Xuất Bán</span>
+                </button>
+                <button onclick="fillAndGoToSingleBox('chuyển 1 đôi ${p.code} size ${targetSize} từ kho tổng sang cửa hàng')" title="Chuyển kho mẫu này" class="px-3 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center space-x-1">
+                  <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+                  <span>Chuyển Kho</span>
+                </button>
+                <button onclick="clearInventorySearch()" title="Đóng tra cứu" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-white/80 transition-all">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        box.classList.remove("hidden");
+        lucide.createIcons();
+        return;
+      }
+
+      // Trường hợp nhiều mẫu khớp với size đó
+      box.className = "bg-amber-50/90 border border-amber-300 rounded-2xl p-3.5 shadow-sm text-xs text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2";
+      box.innerHTML = `
+        <div class="flex items-center space-x-2.5">
+          <span class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center flex-shrink-0">${targetSize}</span>
+          <div>
+            <span class="font-bold text-slate-900">Đang lọc kiểm tra Size ${targetSize}:</span>
+            <span class="text-slate-600">Tìm thấy <strong>${filtered.length}</strong> mẫu giày. Vị trí tồn kho (Cửa Hàng / Kho Tổng) hiển thị trực tiếp ở từng dòng bên dưới.</span>
+          </div>
+        </div>
+        <button onclick="clearInventorySearch()" class="text-xs font-bold text-amber-800 underline hover:text-amber-950 self-end sm:self-auto">Xóa lọc</button>
+      `;
+      box.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function filterInventoryTable() {
+      const rawInput = (document.getElementById("inv-search-input").value || "").trim();
+      const clearBtn = document.getElementById("inv-search-clear-btn");
+      if (clearBtn) {
+        if (rawInput) clearBtn.classList.remove("hidden");
+        else clearBtn.classList.add("hidden");
+      }
+
+      const { keyword, targetSize } = parseInventorySearchQuery(rawInput);
+      currentFilterTargetSize = targetSize;
+      const cat = document.getElementById("inv-category-filter").value;
+
+      // Cập nhật highlight trên thead cho các cột size (38..47)
+      [38, 39, 40, 41, 42, 43, 44, 45, 46, 47].forEach(sz => {
+        const th = document.getElementById(`th-size-${sz}`);
+        if (th) {
+          if (targetSize === sz) {
+            th.className = "sticky top-0 z-30 py-2.5 px-2 text-center bg-amber-400 text-slate-950 font-black border-b-2 border-amber-600 border-l border-amber-500 shadow-md w-14 ring-2 ring-amber-300";
+            th.innerHTML = `<span class="flex flex-col items-center"><span class="text-[8px] uppercase leading-none font-bold text-slate-800">SIZE</span><span class="text-sm font-black">${sz}</span></span>`;
+          } else {
+            th.className = "sticky top-0 z-30 py-3.5 px-2 text-center bg-slate-800 text-amber-300 font-bold border-b-2 border-slate-700 border-l border-slate-700/60 shadow-sm w-12 transition-colors";
+            th.textContent = sz;
+          }
+        }
+      });
+
+      const filtered = allProducts.filter(p => {
+        let matchKeyword = true;
+        if (keyword) {
+          matchKeyword = 
+            p.code.toLowerCase().includes(keyword) || 
+            p.name.toLowerCase().includes(keyword) || 
+            (p.material && p.material.toLowerCase().includes(keyword)) ||
+            (p.color && p.color.toLowerCase().includes(keyword));
+        }
+
+        let matchSize = true;
+        if (targetSize) {
+          const v = p.variants.find(v => v.size === targetSize);
+          matchSize = !!v;
+        }
+
+        const matchCat = !cat || p.category === cat;
+        return matchKeyword && matchSize && matchCat;
+      });
+
+      // Nếu có targetSize, ưu tiên đưa sản phẩm CÒN HÀNG ở size đó lên đầu
+      if (targetSize) {
+        filtered.sort((a, b) => {
+          const va = a.variants.find(v => v.size === targetSize);
+          const vb = b.variants.find(v => v.size === targetSize);
+          const totalA = va ? va.stock_total : 0;
+          const totalB = vb ? vb.stock_total : 0;
+          return totalB - totalA;
+        });
+      }
+
+      renderQuickSearchBanner(rawInput, keyword, targetSize, filtered);
+      renderInventoryTable(filtered, targetSize);
+    }
+
+    function renderInventoryTable(products, targetSize = null) {
       const tbody = document.getElementById("inventory-table-body");
       tbody.innerHTML = "";
 
       if (products.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400">Không tìm thấy mẫu giày nào phù hợp.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-8 text-slate-400">Không tìm thấy mẫu giày nào phù hợp.</td></tr>`;
         return;
       }
 
       products.forEach(p => {
         const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-50/80 transition-colors";
+        tr.className = "hover:bg-slate-50/90 transition-colors group";
 
         // Map các size
         const sizeMap = {};
@@ -1370,70 +1639,113 @@
         });
 
         // Helper render ô size
-        const renderSizeCell = (sz, isGolden = false) => {
+        const renderSizeCell = (sz) => {
           const qty = sizeMap[sz] !== undefined ? sizeMap[sz] : 0;
-          let colorClass = "text-slate-700 bg-slate-50";
+          const v = p.variants.find(x => x.size === sz);
+          const wh1 = v ? v.stock_wh1 : 0; // Kho Tổng
+          const wh2 = v ? v.stock_wh2 : 0; // Cửa Hàng
+          const tooltip = `Size ${sz} - Cửa Hàng: ${wh2} đôi | Kho Tổng: ${wh1} đôi (Tổng: ${wh1 + wh2})`;
+
+          let colorClass = "text-slate-700 bg-slate-100/70 border border-slate-200/60";
           if (qty === 0) {
-            colorClass = "text-rose-600 bg-rose-50 font-bold";
+            colorClass = "text-rose-600 bg-rose-50 font-bold border border-rose-200";
           } else if (qty <= p.min_stock_per_size) {
-            colorClass = "text-amber-700 bg-amber-100/70 font-bold";
+            colorClass = "text-amber-800 bg-amber-100 font-bold border border-amber-300";
           } else {
-            colorClass = "text-emerald-700 bg-emerald-50/50";
+            colorClass = "text-emerald-700 bg-emerald-50 font-semibold border border-emerald-200";
           }
 
-          const goldenBorder = isGolden ? 'border-amber-200' : 'border-slate-100';
+          const isTarget = (targetSize === sz);
+          const cellHighlight = isTarget ? "bg-amber-100/80 ring-2 ring-amber-400 font-black shadow-xs" : "";
+
           return `
-            <td class="py-2.5 px-2 text-center border-l ${goldenBorder}">
-              <span class="inline-block w-8 py-1 rounded text-xs font-semibold ${colorClass}">
+            <td class="py-2.5 px-1 text-center border-b border-slate-200/80 border-l border-slate-200/60 ${cellHighlight}" title="${tooltip}">
+              <span class="inline-block w-8 py-1 rounded text-xs ${colorClass}">
                 ${qty}
               </span>
+              ${isTarget ? `<span class="block text-[9px] font-bold mt-0.5 leading-none whitespace-nowrap"><span class="${wh2 > 0 ? 'text-emerald-700 font-extrabold' : 'text-slate-400'}">CH:${wh2}</span>|<span class="${wh1 > 0 ? 'text-sky-700 font-extrabold' : 'text-slate-400'}">KT:${wh1}</span></span>` : ''}
             </td>
           `;
         };
 
+        // Render Huy hiệu chỉ rõ Kho nào có hàng khi tìm kiếm theo Size
+        let whBadgeHTML = '';
+        if (targetSize) {
+          const vTarget = p.variants.find(v => v.size === targetSize);
+          const wh1 = vTarget ? vTarget.stock_wh1 : 0;
+          const wh2 = vTarget ? vTarget.stock_wh2 : 0;
+          if (wh2 > 0 && wh1 > 0) {
+            whBadgeHTML = `
+              <div class="mt-1 flex items-center gap-1.5 flex-wrap text-[11px]">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold shadow-2xs">
+                  <i data-lucide="store" class="w-3 h-3 text-emerald-600"></i> Cửa Hàng: ${wh2}đ
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-sky-100 text-sky-800 border border-sky-300 font-bold shadow-2xs">
+                  <i data-lucide="home" class="w-3 h-3 text-sky-600"></i> Kho Tổng: ${wh1}đ
+                </span>
+              </div>`;
+          } else if (wh2 > 0) {
+            whBadgeHTML = `
+              <div class="mt-1 flex items-center gap-1.5 flex-wrap text-[11px]">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 font-extrabold shadow-2xs">
+                  <i data-lucide="store" class="w-3 h-3 text-emerald-600"></i> Cửa Hàng: CÓ SẴN ${wh2} đôi
+                </span>
+                <span class="px-1.5 py-0.5 rounded-lg bg-slate-100 text-slate-400 border border-slate-200">Kho Tổng: 0</span>
+              </div>`;
+          } else if (wh1 > 0) {
+            whBadgeHTML = `
+              <div class="mt-1 flex items-center gap-1.5 flex-wrap text-[11px]">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-sky-100 text-sky-800 border border-sky-300 font-extrabold shadow-2xs">
+                  <i data-lucide="home" class="w-3 h-3 text-sky-600"></i> Kho Tổng: CÓ ${wh1} đôi
+                </span>
+                <span class="px-1.5 py-0.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-200 font-medium">Cửa Hàng: Hết (0)</span>
+              </div>`;
+          } else {
+            whBadgeHTML = `
+              <div class="mt-1 text-[11px]">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-medium">
+                  <i data-lucide="alert-circle" class="w-3 h-3 text-rose-500"></i> Cả 2 kho đều hết Size ${targetSize}
+                </span>
+              </div>`;
+          }
+        }
+
         tr.innerHTML = `
-          <td class="py-3 px-4">
+          <td class="py-3 px-4 sticky left-0 z-10 bg-white group-hover:bg-slate-50 border-b border-slate-200/80 border-r border-slate-200 shadow-[1px_0_0_0_#e2e8f0]">
             <div class="font-bold text-slate-900 flex items-center space-x-1.5">
               <span>${p.code}</span>
               <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">${p.category}</span>
             </div>
             <p class="text-xs text-slate-500 truncate max-w-xs">${p.name}</p>
+            ${whBadgeHTML}
           </td>
-          <td class="py-3 px-3 text-xs">
-            <span class="block font-medium text-slate-800">${p.material}</span>
-            <span class="text-slate-400">${p.color}</span>
-          </td>
-          <td class="py-3 px-3 text-right font-semibold text-slate-900 text-xs">
-            ${formatVND(p.retail_price)}
-          </td>
-          
           <!-- Size Cells -->
-          ${renderSizeCell(38, false)}
-          ${renderSizeCell(39, true)}
-          ${renderSizeCell(40, true)}
-          ${renderSizeCell(41, true)}
-          ${renderSizeCell(42, true)}
-          ${renderSizeCell(43, false)}
-          ${renderSizeCell(44, false)}
-          ${renderSizeCell(45, false)}
-          ${renderSizeCell(46, false)}
-          ${renderSizeCell(47, false)}
+          ${renderSizeCell(38)}
+          ${renderSizeCell(39)}
+          ${renderSizeCell(40)}
+          ${renderSizeCell(41)}
+          ${renderSizeCell(42)}
+          ${renderSizeCell(43)}
+          ${renderSizeCell(44)}
+          ${renderSizeCell(45)}
+          ${renderSizeCell(46)}
+          ${renderSizeCell(47)}
 
           <!-- Total Stock -->
-          <td class="py-3 px-3 text-center font-extrabold text-sm text-slate-900">
+          <td class="py-3 px-3 text-center font-extrabold text-sm text-slate-900 border-b border-slate-200/80 border-l border-slate-200/60 bg-slate-50/50">
             ${p.total_stock}
           </td>
 
           <!-- Quick Actions -->
-          <td class="py-3 px-4 text-center">
-            <div class="flex items-center justify-center space-x-1">
-              <button onclick="quickAction('${p.id}', 'inbound')" title="Nhập thêm" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100">
+          <td class="py-3 px-4 text-center border-b border-slate-200/80 border-l border-slate-200/60">
+            <div class="flex items-center justify-center space-x-1.5">
+              <button onclick="quickAction('${p.id}', 'inbound', ${targetSize || 'null'})" title="Nhập thêm mã này vào Ô Toàn Năng" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:scale-105 transition-all">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i>
               </button>
-              <button onclick="quickAction('${p.id}', 'outbound')" title="Xuất bán" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100">
+              <button onclick="quickAction('${p.id}', 'outbound', ${targetSize || 'null'})" title="Xuất bán mã này vào Ô Toàn Năng" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 hover:scale-105 transition-all">
                 <i data-lucide="minus-circle" class="w-4 h-4"></i>
               </button>
-              <button onclick="quickAction('${p.id}', 'transfer')" title="Chuyển kho" class="p-1.5 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-100">
+              <button onclick="quickAction('${p.id}', 'transfer', ${targetSize || 'null'})" title="Chuyển kho mã này vào Ô Toàn Năng" class="p-1.5 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-100 hover:scale-105 transition-all">
                 <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
               </button>
             </div>
@@ -1445,16 +1757,34 @@
       lucide.createIcons();
     }
 
-    // Nút tắt thao tác nhanh từ bảng tồn kho
-    function quickAction(productId, actionType) {
-      switchTab(actionType);
-      const selectId = `${actionType}-product-select`;
-      const sel = document.getElementById(selectId);
-      if (sel) {
-        sel.value = productId;
-        if (actionType === 'inbound') onInboundProductChange();
-        if (actionType === 'outbound') onOutboundProductChange();
-        if (actionType === 'transfer') onTransferProductChange();
+    // Nút tắt thao tác nhanh từ bảng tồn kho vào thẳng Ô Nhập Liệu Toàn Năng
+    function quickAction(productId, actionType, customSize) {
+      const prod = allProducts.find(x => String(x.id) === String(productId));
+      const code = prod ? prod.code : '';
+      const sz = customSize || currentFilterTargetSize || 41;
+      const v = prod ? prod.variants.find(x => x.size === sz) : null;
+      const wh2 = v ? v.stock_wh2 : 0;
+      const wh1 = v ? v.stock_wh1 : 0;
+
+      switchTab('outbound');
+      const box = document.getElementById("single-box-input");
+      if (box && code) {
+        if (actionType === 'inbound') {
+          box.value = `nhập kho ${code} size ${sz} 5 đôi vào kho tổng`;
+        } else if (actionType === 'transfer') {
+          if (wh1 > 0 && wh2 === 0) {
+            box.value = `chuyển 1 đôi ${code} size ${sz} từ kho tổng sang cửa hàng`;
+          } else if (wh2 > 0 && wh1 === 0) {
+            box.value = `chuyển 1 đôi ${code} size ${sz} từ cửa hàng về kho tổng`;
+          } else {
+            box.value = `chuyển 1 đôi ${code} size ${sz} từ kho tổng sang cửa hàng`;
+          }
+        } else {
+          const whName = (wh2 > 0) ? 'cửa hàng' : (wh1 > 0 ? 'kho tổng' : 'cửa hàng');
+          box.value = `${code} ${sz} ${whName}`;
+        }
+        box.focus();
+        triggerSingleBoxParse();
       }
     }
 
@@ -1480,7 +1810,7 @@
         return;
       }
       box.classList.remove("hidden");
-      [38, 39, 40, 41, 42, 43, 44].forEach(sz => {
+      SUPPORTED_SIZES.forEach(sz => {
         document.getElementById(`inbound-qty-${sz}`).value = 0;
       });
       calcInboundTotal();
@@ -1490,7 +1820,7 @@
       const prodId = document.getElementById("inbound-product-select").value;
       const prod = allProducts.find(p => p.id == prodId);
       let totalQty = 0;
-      [38, 39, 40, 41, 42, 43, 44].forEach(sz => {
+      SUPPORTED_SIZES.forEach(sz => {
         totalQty += parseInt(document.getElementById(`inbound-qty-${sz}`).value) || 0;
       });
       document.getElementById("inbound-summary-qty").textContent = totalQty;
@@ -1509,7 +1839,7 @@
       const notes = document.getElementById("inbound-notes").value;
 
       const items = [];
-      [38, 39, 40, 41, 42, 43, 44].forEach(sz => {
+      SUPPORTED_SIZES.forEach(sz => {
         const qty = parseInt(document.getElementById(`inbound-qty-${sz}`).value) || 0;
         if (qty > 0) {
           const variant = prod.variants.find(v => v.size === sz);
@@ -1680,7 +2010,314 @@
       }
     }
 
-    // --- 6. NGHIỆP VỤ CHUYỂN KHO (TRANSFER) ---
+    // --- 5B. NHẬP NHANH PHIẾU XUẤT (1 Ô DUY NHẤT) ---
+    let singleBoxParseTimeout = null;
+    let lastParsedSingleBoxData = null;
+
+    function initSingleBoxListeners() {
+      const input = document.getElementById("single-box-input");
+      if (!input) return;
+
+      input.addEventListener("input", () => {
+        clearTimeout(singleBoxParseTimeout);
+        singleBoxParseTimeout = setTimeout(triggerSingleBoxParse, 200);
+      });
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          submitSingleBoxTransaction();
+        }
+      });
+    }
+
+    function fillSampleInput(text) {
+      const input = document.getElementById("single-box-input");
+      if (input) {
+        input.value = text;
+        triggerSingleBoxParse();
+      }
+    }
+
+    function clearSingleBox() {
+      const input = document.getElementById("single-box-input");
+      if (input) {
+        input.value = "";
+        input.focus();
+      }
+      const preview = document.getElementById("single-box-preview");
+      if (preview) preview.classList.add("hidden");
+      
+      const typeBadge = document.getElementById("sb-type-badge");
+      if (typeBadge) {
+        typeBadge.textContent = "Xuất Bán";
+        typeBadge.className = "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300";
+      }
+      const pBadge = document.getElementById("sb-platform-badge");
+      if (pBadge) pBadge.classList.add("hidden");
+      const cBadge = document.getElementById("sb-purchase-badge");
+      if (cBadge) cBadge.classList.add("hidden");
+      const btnText = document.getElementById("sb-submit-text");
+      if (btnText) btnText.textContent = "Tạo Phiếu Ngay";
+
+      const totalBox = document.getElementById("sb-total-box");
+      if (totalBox) totalBox.className = "p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 transition-colors";
+      const totalLabel = document.getElementById("sb-total-label");
+      if (totalLabel) {
+        totalLabel.className = "text-[10px] text-emerald-800 font-semibold block uppercase";
+        totalLabel.textContent = "Tổng Tiền Phiếu";
+      }
+      const totalEl = document.getElementById("sb-total");
+      if (totalEl) {
+        totalEl.className = "font-extrabold text-emerald-700 text-sm block";
+        totalEl.textContent = "0 đ";
+      }
+      const qpLabel = document.getElementById("sb-qty-price-label");
+      if (qpLabel) qpLabel.textContent = "Số Lượng & Đơn Giá";
+
+      lastParsedSingleBoxData = null;
+    }
+
+    async function triggerSingleBoxParse() {
+      const input = document.getElementById("single-box-input");
+      const preview = document.getElementById("single-box-preview");
+      const errBox = document.getElementById("sb-error-box");
+      const badge = document.getElementById("sb-status-badge");
+      const typeBadge = document.getElementById("sb-type-badge");
+      const platformBadge = document.getElementById("sb-platform-badge");
+      const purchaseBadge = document.getElementById("sb-purchase-badge");
+      const submitText = document.getElementById("sb-submit-text");
+      if (!input || !preview) return;
+
+      const text = input.value.trim();
+      if (!text) {
+        preview.classList.add("hidden");
+        lastParsedSingleBoxData = null;
+        return;
+      }
+
+      preview.classList.remove("hidden");
+
+      try {
+        const res = await fetch("/api/natural-language-transaction", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, action: "parse" })
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          const p = data.data;
+          lastParsedSingleBoxData = p;
+
+          // Cập nhật Type Badge
+          if (typeBadge) {
+            if (p.type === "INBOUND") {
+              typeBadge.textContent = "Nhập Hàng";
+              typeBadge.className = "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300";
+              if (submitText) submitText.textContent = "Tạo Phiếu Nhập Hàng";
+            } else if (p.type === "TRANSFER") {
+              typeBadge.textContent = "Chuyển Kho";
+              typeBadge.className = "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300";
+              if (submitText) submitText.textContent = "Xác Nhận Chuyển Kho";
+            } else {
+              typeBadge.textContent = "Xuất Bán";
+              typeBadge.className = "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300";
+              if (submitText) submitText.textContent = "Tạo Phiếu Xuất Ngay";
+            }
+          }
+
+          // Cập nhật Platform Badge
+          if (platformBadge) {
+            if (p.platform && p.platform !== "Khác") {
+              platformBadge.textContent = `Nền tảng: ${p.platform}`;
+              platformBadge.classList.remove("hidden");
+            } else {
+              platformBadge.classList.add("hidden");
+            }
+          }
+
+          // Cập nhật Purchase Count Badge (chỉ cho OUTBOUND)
+          if (purchaseBadge) {
+            if (p.type === "OUTBOUND") {
+              if (p.purchase_count === 1) {
+                purchaseBadge.textContent = "Khách mới (Mua lần 1)";
+                purchaseBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-300";
+              } else {
+                purchaseBadge.textContent = `Khách quen (Mua lần ${p.purchase_count})`;
+                purchaseBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300";
+              }
+              purchaseBadge.classList.remove("hidden");
+            } else {
+              purchaseBadge.classList.add("hidden");
+            }
+          }
+
+          document.getElementById("sb-name").textContent = p.partner_name || (p.type === 'INBOUND' ? "Xưởng / Nhà cung cấp" : (p.type === 'TRANSFER' ? "Nội bộ" : "(Chưa rõ tên)"));
+          document.getElementById("sb-phone").textContent = p.phone || (p.type === 'OUTBOUND' ? "(Chưa có SĐT)" : "-");
+          document.getElementById("sb-address").textContent = p.address || (p.type === 'OUTBOUND' ? "(Chưa có địa chỉ)" : "-");
+          
+          if (p.product_code) {
+            const hasMulti = p.items && p.items.length > 1;
+            let itemsHtml = '';
+            if (hasMulti) {
+              const chips = p.items.map(it => 
+                `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-900 font-bold text-[11px]">
+                  <span>Sz ${it.size}:</span>
+                  <span class="text-indigo-600">${it.quantity}đ</span>
+                </span>`
+              ).join(" ");
+              itemsHtml = `<div class="font-bold text-amber-800">${p.product_code} <span class="text-slate-500 font-normal text-xs">(${p.product_name || ''})</span></div><div class="flex flex-wrap gap-1 mt-1">${chips}</div>`;
+            } else {
+              itemsHtml = `<span class="text-amber-800 font-bold">${p.product_code}</span> <span class="text-slate-500 font-normal">(${p.product_name || ''})</span> - <span class="text-indigo-700 font-extrabold">Size ${p.size || '?'}</span>`;
+            }
+            document.getElementById("sb-product").innerHTML = itemsHtml;
+          } else {
+            document.getElementById("sb-product").textContent = "(Chưa nhận diện mã giày)";
+          }
+
+          const isTransfer = p.type === "TRANSFER";
+          const hasMulti = p.items && p.items.length > 1;
+          const totalQty = p.total_quantity || p.quantity || 1;
+          const qpLabel = document.getElementById("sb-qty-price-label");
+          const totalBox = document.getElementById("sb-total-box");
+          const totalLabel = document.getElementById("sb-total-label");
+          const totalEl = document.getElementById("sb-total");
+
+          if (isTransfer) {
+            if (qpLabel) qpLabel.textContent = "Số Lượng Chuyển";
+            if (hasMulti) {
+              document.getElementById("sb-qty-price").innerHTML = `<div><span class="font-bold text-slate-900">Tổng ${totalQty} đôi</span> <span class="text-slate-500 text-[11px]">(${p.items.length} size)</span></div><div class="text-sky-700 font-semibold text-[11px]">Chuyển kho nội bộ</div>`;
+            } else {
+              document.getElementById("sb-qty-price").innerHTML = `<div><span class="font-bold text-slate-900">${totalQty} đôi</span></div><div class="text-sky-700 font-semibold text-[11px]">Chuyển kho nội bộ</div>`;
+            }
+            if (totalBox) totalBox.className = "p-2.5 rounded-xl bg-slate-100 border border-slate-200 transition-colors";
+            if (totalLabel) {
+              totalLabel.className = "text-[10px] text-slate-500 font-semibold block uppercase";
+              totalLabel.textContent = "Giá Trị Phiếu";
+            }
+            if (totalEl) {
+              totalEl.className = "font-bold text-slate-600 text-xs block";
+              totalEl.textContent = "Không tính tiền (Nội bộ)";
+            }
+          } else {
+            if (qpLabel) qpLabel.textContent = "Số Lượng & Đơn Giá";
+            if (totalBox) totalBox.className = "p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 transition-colors";
+            if (totalLabel) {
+              totalLabel.className = "text-[10px] text-emerald-800 font-semibold block uppercase";
+              totalLabel.textContent = "Tổng Tiền Phiếu";
+            }
+            if (totalEl) totalEl.className = "font-extrabold text-emerald-700 text-sm block";
+
+            if (hasMulti) {
+              document.getElementById("sb-qty-price").innerHTML = `<div><span class="font-bold text-slate-900">Tổng ${totalQty} đôi</span> <span class="text-slate-500 text-[11px]">(${p.items.length} size)</span></div><div class="text-slate-600 text-[11px]">Đơn giá: ${formatVND(p.unit_price)}</div>`;
+            } else {
+              document.getElementById("sb-qty-price").textContent = `${totalQty} đôi × ${formatVND(p.unit_price)}`;
+            }
+            if (totalEl) totalEl.textContent = formatVND(p.total_amount);
+          }
+
+          const isOutboundOrTransfer = p.type === "OUTBOUND" || p.type === "TRANSFER";
+          let isEnough = true;
+          let stockErrorMsg = '';
+
+          if (isOutboundOrTransfer) {
+            if (p.items && p.items.length > 0) {
+              for (const it of p.items) {
+                if (it.available_stock < it.quantity) {
+                  isEnough = false;
+                  stockErrorMsg = `Không đủ tồn kho: Size ${it.size} tại ${p.warehouse_name} chỉ còn ${it.available_stock} đôi (yêu cầu ${it.quantity} đôi).`;
+                  break;
+                }
+              }
+            } else if (p.available_stock < totalQty) {
+              isEnough = false;
+              stockErrorMsg = `Không đủ tồn kho: Kho chỉ còn ${p.available_stock} đôi, không đủ thực hiện ${totalQty} đôi.`;
+            }
+          }
+          
+          let whDisplayHTML = `<span>${p.warehouse_name}</span>`;
+          if (isOutboundOrTransfer) {
+            const stockSummary = (p.items && p.items.length > 1) 
+              ? `Tồn các size: ` + p.items.map(it => `S${it.size}:${it.available_stock}`).join(" | ")
+              : `Tồn kho xuất: ${p.available_stock} đôi`;
+            const stockCls = isEnough ? "text-emerald-700 bg-emerald-100 border border-emerald-200" : "text-rose-700 bg-rose-100 border border-rose-200";
+            whDisplayHTML += `<span class="inline-block mt-0.5 px-1.5 py-0.2 rounded font-bold text-[10px] ${stockCls}">${stockSummary}</span>`;
+            if (p.is_explicit_warehouse) {
+              whDisplayHTML += ` <span class="inline-block mt-0.5 px-1.5 py-0.2 rounded font-bold text-[10px] bg-purple-100 text-purple-800 border border-purple-200">Đã chỉ định kho</span>`;
+            } else {
+              whDisplayHTML += ` <span class="inline-block mt-0.5 px-1.5 py-0.2 rounded font-medium text-[10px] bg-slate-100 text-slate-600 border border-slate-200" title="Gõ 'kho tổng' hoặc 'cửa hàng' nếu muốn chọn cụ thể">Mặc định</span>`;
+            }
+          } else {
+            const qtyNote = (p.items && p.items.length > 1) ? `Nhập ${totalQty} đôi (${p.items.length} size)` : `Nhập ${totalQty} đôi`;
+            whDisplayHTML += `<span class="inline-block mt-0.5 px-1.5 py-0.2 rounded font-bold text-[10px] text-blue-700 bg-blue-100 border border-blue-200">Kho nhận hàng (${qtyNote})</span>`;
+          }
+          document.getElementById("sb-warehouse").innerHTML = whDisplayHTML;
+
+          if (p.missing_fields && p.missing_fields.length > 0) {
+            errBox.textContent = "⚠️ Cần có thêm: " + p.missing_fields.join(", ");
+            errBox.className = "p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium";
+            errBox.classList.remove("hidden");
+            badge.textContent = "Chưa đủ thông tin";
+            badge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200";
+          } else if (!isEnough) {
+            errBox.textContent = `❌ ${stockErrorMsg}`;
+            errBox.className = "p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium";
+            errBox.classList.remove("hidden");
+            badge.textContent = "Hết hàng";
+            badge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200";
+          } else {
+            errBox.classList.add("hidden");
+            badge.textContent = "✓ Sẵn sàng tạo phiếu";
+            badge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi phân tích cú pháp nhanh:", err);
+      }
+      lucide.createIcons();
+    }
+
+    async function submitSingleBoxTransaction() {
+      const input = document.getElementById("single-box-input");
+      const btn = document.getElementById("sb-submit-btn");
+      if (!input) return;
+
+      const text = input.value.trim();
+      if (!text) {
+        showToast("Vui lòng nhập nội dung giao dịch!", "error");
+        input.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Đang xử lý...</span>';
+      lucide.createIcons();
+
+      try {
+        const res = await fetch("/api/natural-language-transaction", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, action: "create" })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message || "Tạo phiếu giao dịch thành công!", "success");
+          clearSingleBox();
+          await loadProducts();
+          refreshDashboard();
+        } else {
+          showToast(data.error || "Không thể tạo phiếu giao dịch", "error");
+          await triggerSingleBoxParse();
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối máy chủ", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i><span id="sb-submit-text">Tạo Phiếu Ngay</span>';
+        lucide.createIcons();
+      }
+    }
+
     function onTransferWarehouseChange() {
       const src = parseInt(document.getElementById("transfer-source-wh").value);
       const tgtSelect = document.getElementById("transfer-target-wh");
@@ -2062,72 +2699,224 @@
       }
     }
 
-    // --- 9. LỊCH SỬ GIAO DỊCH ---
+    // --- 9. LỊCH SỬ GIAO DỊCH & HỦY ĐƠN ---
+    let cachedTransactionList = [];
+
     async function loadTransactionHistory() {
       const filterType = document.getElementById("history-type-filter").value;
       const tbody = document.getElementById("history-table-body");
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">Đang tải lịch sử...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto mb-2 text-indigo-500"></i>Đang tải sổ giao dịch...</td></tr>`;
+      lucide.createIcons();
 
       try {
-        let url = "/api/transactions?limit=50";
+        let url = "/api/transactions?limit=200";
         if (filterType) url += `&type=${filterType}`;
         const res = await fetch(url);
-        const list = await res.json();
+        cachedTransactionList = await res.json();
+        filterTransactionHistory();
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-6 text-rose-500 font-medium">Lỗi kết nối máy chủ khi tải lịch sử giao dịch.</td></tr>`;
+      }
+    }
 
-        tbody.innerHTML = "";
-        if (list.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">Không có giao dịch nào.</td></tr>`;
-          return;
+    function filterTransactionHistory() {
+      const searchVal = (document.getElementById("history-search-input")?.value || "").trim().toLowerCase();
+      const statusFilter = document.getElementById("history-status-filter")?.value || "";
+
+      let filtered = cachedTransactionList;
+
+      if (statusFilter) {
+        if (statusFilter === "CANCELLED") {
+          filtered = filtered.filter(tx => tx.status === "CANCELLED");
+        } else if (statusFilter === "SUCCESS") {
+          filtered = filtered.filter(tx => tx.status !== "CANCELLED");
+        }
+      }
+
+      if (searchVal) {
+        filtered = filtered.filter(tx => {
+          const matchCode = (tx.code || "").toLowerCase().includes(searchVal);
+          const matchPartner = (tx.partner_name || "").toLowerCase().includes(searchVal);
+          const matchPhone = (tx.customer_phone || "").toLowerCase().includes(searchVal);
+          const matchAddr = (tx.customer_address || "").toLowerCase().includes(searchVal);
+          const matchNotes = (tx.notes || "").toLowerCase().includes(searchVal);
+          const matchItems = (tx.items || []).some(i => (i.product_code || "").toLowerCase().includes(searchVal));
+          return matchCode || matchPartner || matchPhone || matchAddr || matchNotes || matchItems;
+        });
+      }
+
+      renderTransactionHistoryTable(filtered);
+    }
+
+    function renderTransactionHistoryTable(list) {
+      const tbody = document.getElementById("history-table-body");
+      tbody.innerHTML = "";
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="12" class="text-center py-12 text-slate-400">
+              <i data-lucide="clipboard-x" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+              <p class="font-medium text-sm">Không tìm thấy giao dịch nào phù hợp với bộ lọc.</p>
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      list.forEach((tx, idx) => {
+        const tr = document.createElement("tr");
+        const isCancelled = tx.status === "CANCELLED";
+        const rowBg = isCancelled 
+          ? "bg-rose-50/50 hover:bg-rose-100/70 border-b border-slate-300 opacity-80" 
+          : (idx % 2 === 0 ? "bg-white hover:bg-amber-50/70 border-b border-slate-300" : "bg-slate-50/75 hover:bg-amber-50/70 border-b border-slate-300");
+        tr.className = `${rowBg} transition-colors`;
+
+        let typeLabel = "Nhập Hàng";
+        let badgeCls = "bg-emerald-100 text-emerald-800 border border-emerald-300";
+        if (tx.type === "OUTBOUND") {
+          typeLabel = "Xuất Bán";
+          badgeCls = "bg-rose-100 text-rose-800 border border-rose-300";
+        } else if (tx.type === "TRANSFER") {
+          typeLabel = "Chuyển Kho";
+          badgeCls = "bg-sky-100 text-sky-800 border border-sky-300";
+        } else if (tx.type === "AUDIT") {
+          typeLabel = "Kiểm Kê";
+          badgeCls = "bg-purple-100 text-purple-800 border border-purple-300";
         }
 
-        list.forEach(tx => {
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-slate-50 transition-colors";
-
-          let typeLabel = "Nhập Kho";
-          let badgeCls = "bg-emerald-100 text-emerald-800";
-          if (tx.type === "OUTBOUND") {
-            typeLabel = "Xuất Bán";
-            badgeCls = "bg-rose-100 text-rose-800";
-          } else if (tx.type === "TRANSFER") {
-            typeLabel = "Chuyển Kho";
-            badgeCls = "bg-sky-100 text-sky-800";
-          } else if (tx.type === "AUDIT") {
-            typeLabel = "Kiểm Kê";
-            badgeCls = "bg-purple-100 text-purple-800";
+        let whInfo = "";
+        let whBadgeCls = "bg-blue-50 text-blue-800 border-blue-200";
+        let whIcon = "warehouse";
+        if (tx.type === "TRANSFER") {
+          whInfo = `${tx.source_warehouse_name || 'Kho 1'} → ${tx.target_warehouse_name || 'Kho 2'}`;
+          whBadgeCls = "bg-sky-50 text-sky-800 border-sky-200";
+          whIcon = "arrow-left-right";
+        } else if (tx.type === "INBOUND" || tx.type === "AUDIT") {
+          whInfo = tx.target_warehouse_name || 'Kho 1';
+          if (tx.target_warehouse_id === 2) {
+            whBadgeCls = "bg-indigo-50 text-indigo-800 border-indigo-200";
+            whIcon = "store";
           }
-
-          let whInfo = "";
-          if (tx.type === "TRANSFER") {
-            whInfo = `${tx.source_warehouse_name || 'Kho 1'} → ${tx.target_warehouse_name || 'Kho 2'}`;
-          } else if (tx.type === "INBOUND" || tx.type === "AUDIT") {
-            whInfo = tx.target_warehouse_name || 'Kho 1';
-          } else {
-            whInfo = tx.source_warehouse_name || 'Kho 2';
+        } else {
+          whInfo = tx.source_warehouse_name || 'Kho 2';
+          if (tx.source_warehouse_id === 2) {
+            whBadgeCls = "bg-indigo-50 text-indigo-800 border-indigo-200";
+            whIcon = "store";
           }
+        }
 
-          const itemsText = (tx.items || []).map(i => `${i.product_code} (Size ${i.size}: ${i.quantity}đ)`).join(", ");
+        // Render mặt hàng
+        const itemsHTML = (tx.items || []).map(i => `
+          <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white border border-slate-300 text-slate-800 font-medium text-[11px] shadow-2xs">
+            <strong class="text-amber-800">${i.product_code}</strong>
+            <span class="text-indigo-600 font-bold">Sz ${i.size}</span>:
+            <span class="font-bold text-slate-900">${i.quantity}đ</span>
+          </span>
+        `).join("");
 
-          tr.innerHTML = `
-            <td class="py-3 px-4 font-mono font-bold text-xs text-slate-900">${tx.code}</td>
-            <td class="py-3 px-3">
-              <span class="px-2 py-0.5 rounded text-[11px] font-bold ${badgeCls}">${typeLabel}</span>
-            </td>
-            <td class="py-3 px-3 text-xs text-slate-500">${new Date(tx.created_at).toLocaleString('vi-VN')}</td>
-            <td class="py-3 px-3 text-xs font-medium text-slate-800">${whInfo}</td>
-            <td class="py-3 px-3 text-xs text-slate-600">${tx.partner_name || 'Nội bộ'}</td>
-            <td class="py-3 px-3 text-center font-bold text-slate-900 text-xs">${tx.total_quantity} đôi</td>
-            <td class="py-3 px-3 text-right font-semibold text-slate-900 text-xs">${formatVND(tx.total_amount)}</td>
-            <td class="py-3 px-4 text-xs text-slate-500">
-              <div class="truncate max-w-xs" title="${itemsText}">${itemsText}</div>
-              <p class="text-[11px] text-slate-400 italic">${tx.notes || ''}</p>
-            </td>
+        // Render thông tin khách hàng
+        let customerHTML = "";
+        if (tx.type === "OUTBOUND") {
+          const pCountBadge = tx.purchase_count ? `<span class="inline-block px-1.5 py-0.2 rounded font-bold text-[10px] ${tx.purchase_count === 1 ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-amber-100 text-amber-800 border border-amber-200'}">Mua lần ${tx.purchase_count}</span>` : "";
+          customerHTML = `
+            <div class="font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
+              <span>${tx.partner_name || 'Khách lẻ'}</span>
+              ${pCountBadge}
+            </div>
+            ${tx.customer_phone ? `<div class="font-mono text-[11px] text-slate-700 font-semibold mt-0.5">${tx.customer_phone}</div>` : ''}
+            ${tx.customer_address ? `<div class="text-[10px] text-slate-500 truncate max-w-xs mt-0.5" title="${tx.customer_address}">Đ/c: ${tx.customer_address}</div>` : ''}
           `;
-          tbody.appendChild(tr);
-        });
+        } else {
+          customerHTML = `<div class="font-bold text-slate-900">${tx.partner_name || 'Nội bộ'}</div>`;
+        }
 
+        // Trạng thái badge
+        const statusBadge = isCancelled 
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 block text-center">ĐÃ HỦY ĐƠN</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 block text-center">Thành Công</span>`;
+
+        // Mã phiếu nổi bật có viền ngăn cách
+        const codeHTML = isCancelled
+          ? `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 font-mono font-bold text-xs border border-rose-300 line-through">
+               <i data-lucide="x-circle" class="w-3.5 h-3.5 text-rose-600"></i>
+               <span>${tx.code}</span>
+             </div>`
+          : `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 text-amber-300 font-mono font-black text-xs border border-slate-700 shadow-sm tracking-wide">
+               <i data-lucide="receipt" class="w-3.5 h-3.5 text-amber-400"></i>
+               <span>${tx.code}</span>
+             </div>`;
+
+        // Nút hành động
+        let actionHTML = "";
+        if (isCancelled) {
+          actionHTML = `<span class="text-[11px] text-slate-400 italic block text-center font-medium">Đã hoàn kho</span>`;
+        } else {
+          actionHTML = `
+            <button onclick="cancelTransactionAction(${tx.id}, '${tx.code}')" title="Hủy đơn & hoàn lại tồn kho" class="mx-auto px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition-all flex items-center justify-center space-x-1 shadow-sm">
+              <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+              <span>Hủy đơn</span>
+            </button>
+          `;
+        }
+
+        const strikeCls = isCancelled ? "line-through text-slate-400" : "";
+
+        tr.innerHTML = `
+          <td class="py-3 px-2 text-center font-bold text-slate-500 border-r border-b border-slate-200 bg-slate-100/40">${idx + 1}</td>
+          <td class="py-3 px-3 border-r border-b border-slate-200 font-mono">${codeHTML}</td>
+          <td class="py-3 px-2 text-center border-r border-b border-slate-200">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${badgeCls}">${typeLabel}</span>
+          </td>
+          <td class="py-3 px-2 text-center border-r border-b border-slate-200">${statusBadge}</td>
+          <td class="py-3 px-2 text-center border-r border-b border-slate-200">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${tx.platform || 'Khác'}</span>
+          </td>
+          <td class="py-3 px-2.5 text-xs text-slate-600 whitespace-nowrap border-r border-b border-slate-200 font-medium">${new Date(tx.created_at).toLocaleString('vi-VN')}</td>
+          <td class="py-3 px-3 text-xs font-medium border-r border-b border-slate-200">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-semibold text-[11px] border ${whBadgeCls}">
+              <i data-lucide="${whIcon}" class="w-3 h-3"></i>
+              <span>${whInfo}</span>
+            </span>
+          </td>
+          <td class="py-3 px-3.5 text-xs border-r border-b border-slate-200">${customerHTML}</td>
+          <td class="py-3 px-2 text-center font-bold text-slate-900 text-xs border-r border-b border-slate-200 ${strikeCls}">
+            <span class="px-2 py-0.5 rounded bg-slate-100/80 font-bold border border-slate-200">${tx.total_quantity}</span>
+          </td>
+          <td class="py-3 px-3 text-right font-extrabold text-slate-900 text-xs border-r border-b border-slate-200 ${strikeCls}">${tx.type === 'TRANSFER' ? '<span class="text-slate-400 font-semibold italic text-[11px]">- (Nội bộ)</span>' : formatVND(tx.total_amount)}</td>
+          <td class="py-3 px-3.5 text-xs text-slate-600 border-r border-b border-slate-200">
+            <div class="flex flex-wrap gap-1 ${strikeCls}">${itemsHTML}</div>
+            ${tx.notes ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight">${tx.notes}</p>` : ''}
+          </td>
+          <td class="py-3 px-3 text-center border-b border-slate-200">${actionHTML}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    async function cancelTransactionAction(txId, txCode) {
+      if (!confirm(`XÁC NHẬN HỦY PHIẾU GIAO DỊCH: ${txCode}?\n\n⚠️ Lưu ý quan trọng:\n- Toàn bộ số lượng giày trong phiếu sẽ được tự động HOÀN TRẢ VỀ TỒN KHO.\n- Phiếu xuất sẽ được đánh dấu 'Đã hủy' và không tính vào doanh thu bán hàng.\n\nBạn có chắc chắn muốn hủy phiếu này không?`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/transactions/${txId}/cancel`, {
+          method: "POST"
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(data.message || `Đã hủy phiếu ${txCode} thành công!`, "success");
+          await loadTransactionHistory();
+          await loadProducts();
+          refreshDashboard();
+        } else {
+          showToast(data.detail || data.error || "Không thể hủy giao dịch", "error");
+        }
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-rose-500">Lỗi khi tải lịch sử giao dịch.</td></tr>`;
+        showToast("Lỗi kết nối khi hủy giao dịch", "error");
       }
     }
 
@@ -2247,9 +3036,10 @@
 
     // --- 13. XUẤT FILE EXCEL ---
     function downloadExcelReport() {
-      showToast("Đang tạo và tải file Excel báo cáo 2 kho...", "info");
+      showToast("Đang tạo và tải file Excel phiếu xuất hàng (Sheet Xuất)...", "info");
       window.location.href = "/api/export/excel";
     }
-  </script>
+
+</script>
 </body>
 </html>

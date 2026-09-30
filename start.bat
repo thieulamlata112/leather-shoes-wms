@@ -1,32 +1,22 @@
 @echo off
+cd /d "D:\New folder\leather-shoes-wms"
 chcp 65001 > nul
-title Hệ Thống Quản Lý Kho Giày Da Trực Tuyến
+title KingsMan Leather Shoemaker - WMS
 color 0b
 
-echo ======================================================================
-echo    HỆ THỐNG QUẢN LÝ KHO GIÀY DA TRỰC TUYẾN (2 KHO & MA TRẬN SIZE)
-echo ======================================================================
+echo ================================================
+echo    HE THONG QUAN LY KHO GIAY DA KINGSMAN
+echo    Truy cap: http://localhost:8000
+echo    Nhan Ctrl + C de dung may chu
+echo ================================================
 echo.
-echo  Đang khởi động máy chủ quản lý kho...
 
 if not exist ".venv\Scripts\python.exe" (
-    echo [!] Chưa tìm thấy môi trường ảo .venv. Đang tự động tạo...
+    echo [!] Chua tim thay .venv. Dang tao...
     python -m venv .venv
     .venv\Scripts\pip.exe install -r requirements.txt
 )
 
-echo  [+] Đang mở trình duyệt vào hệ thống...
-start http://localhost:8000
-
-echo.
-echo  Máy chủ đang chạy tại:
-echo    - Máy tính hiện tại: http://localhost:8000
-echo.
-echo  (Để mở trên điện thoại, vui lòng kết nối cùng mạng Wi-Fi và xem mã QR trên web)
-echo.
-echo  Nhấn Ctrl + C để dừng máy chủ khi không sử dụng.
-echo ======================================================================
-echo.
-
+echo [+] Khoi dong may chu...
 .venv\Scripts\python.exe app.py
 pause

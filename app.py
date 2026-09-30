@@ -41,7 +41,7 @@ class NewProductRequest(BaseModel):
     retail_price: float = 0
     min_stock_per_size: int = 2
     notes: Optional[str] = ""
-    sizes: List[int] = [38, 39, 40, 41, 42, 43, 44]
+    sizes: List[int] = database.SUPPORTED_SIZES.copy()
     initial_stock_wh1: Dict[str, int] = {}
     initial_stock_wh2: Dict[str, int] = {}
 
@@ -143,12 +143,47 @@ def create_transaction(payload: CreateTransactionRequest):
     try:
         res = database.execute_stock_transaction(data)
         return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Lỗi thực hiện giao dịch kho: {str(e)}")
 
+
+
+class NLTransactionRequest(BaseModel):
+    text: str
+    action: Optional[str] = "create" # "parse" or "create"
+
+@app.post("/api/natural-language-transaction")
+def natural_language_transaction(req: NLTransactionRequest):
+    """Xử lý giao dịch từ văn bản tự nhiên tiếng Việt."""
+    try:
+        from text_parser import parse_and_create_transaction, parse_natural_language
+        if req.action == "parse":
+            parsed = parse_natural_language(req.text)
+            return {"success": True, "message": "Phân tích thành công", "data": parsed}
+        else:
+            result = parse_and_create_transaction(req.text)
+            if result.get("success"):
+                return {"success": True, "message": result["message"], "data": result.get("parsed", {})}
+            else:
+                return {"success": False, "error": result.get("error"), "parsed": result.get("parsed", {})}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 @app.get("/api/transactions")
 def list_transactions(limit: int = 50, type: Optional[str] = None):
     return database.get_transactions_list(limit, type)
+
+@app.post("/api/transactions/{transaction_id}/cancel")
+def cancel_transaction(transaction_id: int):
+    """Hủy phiếu giao dịch và tự động hoàn trả tồn kho."""
+    try:
+        res = database.cancel_transaction(transaction_id)
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi khi hủy phiếu: {str(e)}")
 
 @app.post("/api/import/re-sync")
 def resync_from_excel():
@@ -159,166 +194,208 @@ def resync_from_excel():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Lỗi khi đồng bộ: {str(e)}")
 
-# --- Xuất Báo Cáo Excel ---
+# --- Xuất Phiếu Xuất Hàng Excel (Sheet Xuất chuẩn KingsMan) ---
 @app.get("/api/export/excel")
 def export_excel():
     wb = openpyxl.Workbook()
-    
-    # Header styling
-    header_fill = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid") # Dark Blue
-    header_font = Font(name="Arial", size=11, bold=True, color="FFFFFF")
-    title_font = Font(name="Arial", size=16, bold=True, color="1E3A8A")
-    subtitle_font = Font(name="Arial", size=10, italic=True, color="555555")
+    ws = wb.active
+    ws.title = "Xuất"
+
+    # Header styling chuẩn sheet Xuất của KingsMan (1).xlsx: nền cam đào #F9CB9C, chữ đỏ đậm #FF0000
+    header_fill = PatternFill(start_color="FFF9CB9C", end_color="FFF9CB9C", fill_type="solid")
+    header_font = Font(name="Calibri", size=13, bold=True, color="FFFF0000")
     border_thin = Border(
-        left=Side(style='thin', color='DDDDDD'),
-        right=Side(style='thin', color='DDDDDD'),
-        top=Side(style='thin', color='DDDDDD'),
-        bottom=Side(style='thin', color='DDDDDD')
+        left=Side(style='thin', color='D9D9D9'),
+        right=Side(style='thin', color='D9D9D9'),
+        top=Side(style='thin', color='D9D9D9'),
+        bottom=Side(style='thin', color='D9D9D9')
     )
-    
-    # Sheet 1: Báo Cáo Tồn Kho 2 Kho theo Ma Trận Size
-    ws1 = wb.active
-    ws1.title = "Ton_Kho_Ma_Tran_Size"
-    
-    ws1["A1"] = "BÁO CÁO TỒN KHO GIÀY DA - THEO MA TRẬN KÍCH CỠ"
-    ws1["A1"].font = title_font
-    ws1["A2"] = f"Thời gian xuất: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')} | Quản lý: Kho 1 & Kho 2"
-    ws1["A2"].font = subtitle_font
-    
-    ALL_SIZES = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
-    headers1 = [
-        "Mã SKU", "Tên Mẫu Giày", "Chất Liệu", "Màu Sắc", "Kho Hàng",
-        "Size 38", "Size 39", "Size 40", "Size 41", "Size 42", "Size 43", "Size 44", "Size 45", "Size 46", "Size 47",
-        "Tổng Đôi", "Giá Vốn (VNĐ)", "Giá Bán (VNĐ)", "Tổng Giá Vốn", "Tổng Giá Bán"
+
+    headers = [
+        "Ngày Bán", "Mã Giày", "Size", "Số lượng", "Giá", "Kho",
+        "Chuyển Khoản", "COD", "Tên Khách Hàng", "SDT", "Địa Chỉ",
+        "Nền Tảng", "zalo", "FB", "Ghi chú", "Đã Giao", "Size Đúng", "Tất"
     ]
-    
-    for col_num, header in enumerate(headers1, 1):
-        cell = ws1.cell(row=4, column=col_num)
-        cell.value = header
+
+    ws.row_dimensions[1].height = 26
+    for col_num, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num, value=header)
         cell.fill = header_fill
         cell.font = header_font
-        cell.alignment = Alignment(horizontal="center", vertical="center")
-        
-    products = database.get_all_products_with_stock()
-    current_row = 5
-    
-    for p in products:
-        # Lấy số tồn theo từng size
-        sizes_map_wh1 = {}
-        sizes_map_wh2 = {}
-        sizes_map_all = {}
-        
-        for v in p["variants"]:
-            sz = v["size"]
-            sizes_map_wh1[sz] = v["stock_wh1"]
-            sizes_map_wh2[sz] = v["stock_wh2"]
-            sizes_map_all[sz] = v["stock_total"]
-            
-        # Dòng 1: Kho 1
-        ws1.cell(row=current_row, column=1, value=p["code"])
-        ws1.cell(row=current_row, column=2, value=p["name"])
-        ws1.cell(row=current_row, column=3, value=p["material"])
-        ws1.cell(row=current_row, column=4, value=p["color"])
-        ws1.cell(row=current_row, column=5, value="Kho 1 (Kho Tổng - Ở Nhà)")
-        for i, sz in enumerate(ALL_SIZES, 6):
-            c = ws1.cell(row=current_row, column=i, value=sizes_map_wh1.get(sz, 0))
-            c.alignment = Alignment(horizontal="center")
-        col_tot = 6 + len(ALL_SIZES)
-        ws1.cell(row=current_row, column=col_tot, value=p["stock_wh1_total"])
-        ws1.cell(row=current_row, column=col_tot + 1, value=p["cost_price"])
-        ws1.cell(row=current_row, column=col_tot + 2, value=p["retail_price"])
-        ws1.cell(row=current_row, column=col_tot + 3, value=p["stock_wh1_total"] * p["cost_price"])
-        ws1.cell(row=current_row, column=col_tot + 4, value=p["stock_wh1_total"] * p["retail_price"])
-        current_row += 1
-        
-        # Dòng 2: Kho 2
-        ws1.cell(row=current_row, column=1, value=p["code"])
-        ws1.cell(row=current_row, column=2, value=p["name"])
-        ws1.cell(row=current_row, column=3, value=p["material"])
-        ws1.cell(row=current_row, column=4, value=p["color"])
-        ws1.cell(row=current_row, column=5, value="Kho 2 (Cửa Hàng)")
-        for i, sz in enumerate(ALL_SIZES, 6):
-            c = ws1.cell(row=current_row, column=i, value=sizes_map_wh2.get(sz, 0))
-            c.alignment = Alignment(horizontal="center")
-        ws1.cell(row=current_row, column=col_tot, value=p["stock_wh2_total"])
-        ws1.cell(row=current_row, column=col_tot + 1, value=p["cost_price"])
-        ws1.cell(row=current_row, column=col_tot + 2, value=p["retail_price"])
-        ws1.cell(row=current_row, column=col_tot + 3, value=p["stock_wh2_total"] * p["cost_price"])
-        ws1.cell(row=current_row, column=col_tot + 4, value=p["stock_wh2_total"] * p["retail_price"])
-        current_row += 1
-        
-        # Dòng 3: Tổng Cộng cả 2 kho (In đậm)
-        ws1.cell(row=current_row, column=1, value=p["code"])
-        ws1.cell(row=current_row, column=2, value=p["name"])
-        ws1.cell(row=current_row, column=3, value=p["material"])
-        ws1.cell(row=current_row, column=4, value=p["color"])
-        ws1.cell(row=current_row, column=5, value="TỔNG 2 KHO")
-        for i, sz in enumerate(ALL_SIZES, 6):
-            c = ws1.cell(row=current_row, column=i, value=sizes_map_all.get(sz, 0))
-            c.alignment = Alignment(horizontal="center")
-            c.font = Font(bold=True)
-        ws1.cell(row=current_row, column=col_tot, value=p["total_stock"]).font = Font(bold=True)
-        ws1.cell(row=current_row, column=col_tot + 1, value=p["cost_price"])
-        ws1.cell(row=current_row, column=col_tot + 2, value=p["retail_price"])
-        ws1.cell(row=current_row, column=col_tot + 3, value=p["total_stock"] * p["cost_price"]).font = Font(bold=True)
-        ws1.cell(row=current_row, column=col_tot + 4, value=p["total_stock"] * p["retail_price"]).font = Font(bold=True)
-        
-        for r_idx in range(current_row - 2, current_row + 1):
-            for c_idx in range(1, col_tot + 5):
-                ws1.cell(row=r_idx, column=c_idx).border = border_thin
-        current_row += 1
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.border = border_thin
 
-    # Auto fit cột
-    for col in ws1.columns:
-        max_len = max(len(str(cell.value or '')) for cell in col)
-        col_letter = openpyxl.utils.get_column_letter(col[0].column)
-        ws1.column_dimensions[col_letter].width = max(max_len + 3, 11)
+    col_widths = {
+        1: 13,   # Ngày Bán
+        2: 12,   # Mã Giày
+        3: 10,   # Size
+        4: 10,   # Số lượng
+        5: 12,   # Giá
+        6: 12,   # Kho
+        7: 15,   # Chuyển Khoản
+        8: 15,   # COD
+        9: 24,   # Tên Khách Hàng
+        10: 16,  # SDT
+        11: 45,  # Địa Chỉ
+        12: 14,  # Nền Tảng
+        13: 16,  # zalo
+        14: 10,  # FB
+        15: 18,  # Ghi chú
+        16: 20,  # Đã Giao
+        17: 14,  # Size Đúng
+        18: 10   # Tất
+    }
+    for col_idx, width in col_widths.items():
+        col_letter = openpyxl.utils.get_column_letter(col_idx)
+        ws.column_dimensions[col_letter].width = width
 
-    # Sheet 2: Cảnh Báo Size Vàng Thiếu Hàng
-    ws2 = wb.create_sheet(title="Canh_Bao_Size_Vang")
-    ws2["A1"] = "DANH SÁCH CẢNH BÁO ĐỨT GÃY SIZE VÀNG (39, 40, 41, 42) & THIẾU HÀNG"
-    ws2["A1"].font = title_font
-    
-    headers2 = ["Mã Giày", "Tên Mẫu", "Kích Cỡ", "Mã Vạch Barcode", "Kho Hàng", "Số Tồn Thực Tế", "Ngưỡng Cảnh Báo", "Tình Trạng"]
-    for col_num, header in enumerate(headers2, 1):
-        cell = ws2.cell(row=3, column=col_num)
-        cell.value = header
-        cell.fill = PatternFill(start_color="DC2626", end_color="DC2626", fill_type="solid") # Red
-        cell.font = header_font
-        cell.alignment = Alignment(horizontal="center")
-        
-    stats = database.get_dashboard_stats()
-    r2 = 4
-    for item in stats["golden_size_alerts"] + stats["other_alerts"]:
-        ws2.cell(row=r2, column=1, value=item["product_code"])
-        ws2.cell(row=r2, column=2, value=item["product_name"])
-        ws2.cell(row=r2, column=3, value=f"Size {item['size']}").alignment = Alignment(horizontal="center")
-        ws2.cell(row=r2, column=4, value=item["barcode"])
-        ws2.cell(row=r2, column=5, value=item["warehouse_name"])
-        qty_cell = ws2.cell(row=r2, column=6, value=item["quantity"])
-        qty_cell.alignment = Alignment(horizontal="center")
-        qty_cell.font = Font(bold=True, color="DC2626" if item["quantity"] == 0 else "D97706")
-        ws2.cell(row=r2, column=7, value=item["min_stock_per_size"]).alignment = Alignment(horizontal="center")
-        status_txt = "HẾT HÀNG (0 đôi)" if item["quantity"] == 0 else f"Sắp hết ({item['quantity']} đôi)"
-        ws2.cell(row=r2, column=8, value=status_txt)
-        r2 += 1
+    # Chỉ xuất các phiếu xuất hàng (OUTBOUND)
+    tx_list = database.get_transactions_list(limit=10000, tx_type="OUTBOUND")
+    current_row = 2
 
-    for col in ws2.columns:
-        max_len = max(len(str(cell.value or '')) for cell in col)
-        col_letter = openpyxl.utils.get_column_letter(col[0].column)
-        ws2.column_dimensions[col_letter].width = max(max_len + 3, 12)
+    for tx in tx_list:
+        dt_str = tx.get("created_at") or ""
+        try:
+            sale_date = datetime.strptime(dt_str[:10], "%Y-%m-%d").date()
+        except Exception:
+            sale_date = datetime.now().date()
+
+        # Kho: Kho 1 (Kho Tổng/Ở Nhà) -> 'Ở Nhà', Kho 2 (Cửa Hàng) -> 'Kho'
+        src_wh = tx.get("source_warehouse_id")
+        kho_str = "Ở Nhà" if src_wh == 1 else "Kho"
+
+        # Tên khách hàng
+        pname = tx.get("partner_name") or "Khách lẻ"
+        if " - " in pname:
+            pname = pname.split(" - ")[0].strip()
+
+        # Thông tin SĐT, Địa chỉ, Nền tảng
+        phone = tx.get("customer_phone") or ""
+        address = tx.get("customer_address") or ""
+        platform = tx.get("platform") or ""
+        notes = tx.get("notes") or ""
+
+        # Trích xuất fallback từ notes nếu chưa có
+        if notes and "|" in notes:
+            parts = [p.strip() for p in notes.split("|")]
+            if any(":" in p for p in parts):
+                for p in parts:
+                    if ":" in p:
+                        k, v = p.split(":", 1)
+                        k = k.strip().lower()
+                        v = v.strip()
+                        if ("sđt" in k or "phone" in k or "sdt" in k) and not phone:
+                            phone = v
+                        elif ("đ/c" in k or "địa chỉ" in k or "dia chi" in k) and not address:
+                            address = v
+                        elif ("nền tảng" in k or "nen tang" in k) and (not platform or platform == "Khác"):
+                            platform = v
+            elif len(parts) >= 3:
+                if not platform or platform == "Khác":
+                    platform = parts[0]
+                if not phone:
+                    phone = parts[1]
+                if not address:
+                    address = parts[2]
+
+        if not platform or platform == "Khác":
+            platform = "Page"
+        if not phone:
+            phone = "K"
+        if not address:
+            address = "K"
+
+        # Zalo & FB
+        zalo_val = pname if ("zalo" in platform.lower() or "voz" in platform.lower()) else "K"
+        fb_val = "K"
+
+        # Ghi chú
+        p_count = tx.get("purchase_count") or 1
+        ghi_chu = f"Mua lần {p_count}" if p_count > 1 else "Mua lần 1"
+
+        # Trạng thái giao hàng
+        is_cancelled = tx.get("status") == "CANCELLED"
+        da_giao = "ĐÃ HỦY ĐƠN" if is_cancelled else "Giao Thành Công"
+
+        items = tx.get("items", [])
+        if not items:
+            tot_qty = tx.get("total_quantity", 1) or 1
+            tot_amt = tx.get("total_amount", 0.0) or 0.0
+            u_price = tot_amt / tot_qty if tot_qty else 0.0
+            items = [{
+                "product_code": "-",
+                "size": "-",
+                "quantity": tot_qty,
+                "unit_price": u_price
+            }]
+
+        for it in items:
+            ws.row_dimensions[current_row].height = 20
+            p_code = it.get("product_code", "-")
+            size_val = it.get("size", "-")
+            qty_val = it.get("quantity", 1)
+
+            # Quy đổi giá sang đơn vị nghìn đồng (890.000 -> 890.0) giống file KingsMan gốc
+            raw_price = it.get("unit_price", 0.0) or 0.0
+            if raw_price >= 10000:
+                price_k = round(raw_price / 1000.0, 1)
+            elif raw_price > 0:
+                price_k = round(raw_price, 1)
+            else:
+                price_k = 0.0
+
+            # Phân bổ Chuyển Khoản vs COD
+            is_ck = any(k in notes.lower() for k in ["ck", "chuyển khoản", "chuyen khoan", "banking"])
+            if is_ck:
+                val_ck = round(price_k * qty_val, 1)
+                val_cod = "K"
+            else:
+                val_ck = "K"
+                val_cod = round(price_k * qty_val, 1)
+
+            row_data = [
+                (sale_date, "yyyy-mm-dd", "center"),
+                (p_code, None, "center"),
+                (size_val, None, "center"),
+                (qty_val, None, "center"),
+                (price_k, "#,##0.0", "center"),
+                (kho_str, None, "center"),
+                (val_ck, "#,##0.0" if isinstance(val_ck, (int, float)) else None, "center"),
+                (val_cod, "#,##0.0" if isinstance(val_cod, (int, float)) else None, "center"),
+                (pname, None, "center"),
+                (phone, "@", "center"),
+                (address, None, "left" if len(str(address)) > 25 else "center"),
+                (platform, None, "center"),
+                (zalo_val, None, "center"),
+                (fb_val, None, "center"),
+                (ghi_chu, None, "center"),
+                (da_giao, None, "center"),
+                ("", None, "center"),
+                ("", None, "center")
+            ]
+
+            for col_idx, (val, num_fmt, align_h) in enumerate(row_data, 1):
+                cell = ws.cell(row=current_row, column=col_idx, value=val)
+                cell.font = Font(name="Calibri", size=11)
+                cell.alignment = Alignment(horizontal=align_h, vertical="center")
+                cell.border = border_thin
+                if num_fmt:
+                    cell.number_format = num_fmt
+
+            current_row += 1
 
     # Lưu vào buffer byte
     stream = io.BytesIO()
     wb.save(stream)
     stream.seek(0)
-    
-    filename = f"Bao_Cao_Ton_Kho_Giay_Da_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+
+    filename = f"KingsMan_Phieu_Xuat_Hang_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
     return StreamingResponse(
         stream,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
 
 # --- Mount Static Frontend ---
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
@@ -331,7 +408,14 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 def serve_index():
     index_path = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_path):
-        return FileResponse(index_path)
+        return FileResponse(
+            index_path,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
     return HTMLResponse("<h1>Hệ Thống Quản Lý Kho Giày Da đang khởi động...</h1>")
 
 if __name__ == "__main__":
