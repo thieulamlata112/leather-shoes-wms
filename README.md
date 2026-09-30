@@ -1,7 +1,7 @@
 # Hệ Thống Quản Lý Kho Giày Da Trực Tuyến (2 Kho & Ma Trận Size)
 
 Phần mềm chuyên biệt cho các chủ shop thời trang, nhà xưởng và chuỗi bán lẻ **giày da cao cấp**, giúp giải quyết trọn vẹn bài toán:
-1. **Ma trận Kích thước (Size 38 - 44)**: Nhập/xuất/chuyển kho nhanh chóng theo bảng size trực quan, không phải gõ từng dòng.
+1. **Ma trận Kích thước (Size 38 - 47)**: Nhập/xuất/chuyển kho nhanh chóng theo bảng size trực quan, không phải gõ từng dòng.
 2. **Quản lý Đa Kho (Kho 1 & Kho 2)**: Theo dõi tồn kho độc lập tại Kho Tổng và Cửa hàng Showroom, luân chuyển hàng giữa 2 kho chỉ bằng 1 thao tác.
 3. **Cảnh báo đứt gãy "Size Vàng" (39, 40, 41, 42)**: Nhắc nhở kịp thời các size phổ thông bán chạy nhất khi sắp cạn hàng.
 4. **Quản lý Trực Tuyến Đa Thiết Bị (PC & Điện thoại)**: Tương thích hoàn hảo trên điện thoại di động (có thể quét mã vạch bằng camera) và máy tính PC/Laptop.
@@ -46,8 +46,8 @@ Nếu bạn muốn khi đi ra ngoài đường, ở xưởng xa hoặc ở nhà 
 
 ### 📦 2. Kho Hàng & Bảng Ma Trận Size
 - Bộ lọc kho: Xem riêng **Kho 1**, xem riêng **Kho 2** hoặc xem **Cả 2 Kho**.
-- Bảng ma trận: Cột hiển thị từng kích cỡ từ 38 đến 44. Các ô size được đổi màu trực quan (Đỏ: Hết hàng, Vàng: Sắp hết, Xanh: An toàn).
-- Nút thêm mới mẫu giày da với tính năng tự động sinh mã vạch Barcode/SKU cho toàn bộ các size từ 38 đến 44.
+- Bảng ma trận: Cột hiển thị từng kích cỡ từ 38 đến 47. Các ô size được đổi màu trực quan (Đỏ: Hết hàng, Vàng: Sắp hết, Xanh: An toàn).
+- Nút thêm mới mẫu giày da với tính năng tự động sinh mã vạch Barcode/SKU cho toàn bộ các size từ 38 đến 47.
 
 ### 📥 3. Nhập Kho (Inbound)
 - Chọn Kho nhận (Kho 1 hoặc Kho 2).
