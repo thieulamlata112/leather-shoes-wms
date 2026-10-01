@@ -58,6 +58,7 @@ def normalize_vietnamese(text: str) -> str:
     import unicodedata
     if not text:
         return ""
+    text = text.replace("đ", "d").replace("Đ", "D")
     normalized = unicodedata.normalize('NFD', text)
     no_diacritics = ''.join(c for c in normalized if unicodedata.category(c) != 'Mn')
     return no_diacritics.lower()
@@ -532,16 +533,274 @@ def extract_warehouse(text: str, tx_type: str) -> Tuple[Optional[int], Optional[
     return source_wh, target_wh, is_explicit, remaining
 
 
+def parse_exchange_request(text_clean: str, text_normalized: str, all_prods: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """
+    Nhận diện yêu cầu Khách đổi size hoặc đổi mẫu giày:
+    VD:
+    - khách Trần Minh Trí đổi size 43 sang 42 lấy từ kho tổng
+    - Trần Minh Trí đổi size 42 lấy ở nhà
+    - khách 0344117974 đổi CTD 43 sang CTD 42 ở cửa hàng
+    - 0344117974 đổi sang size 42 lấy ở cửa hàng
+    - khách Long Phạm đổi sang CTD 43 ở nhà
+    - khách Nguyễn Tuấn đổi CTD 42 sang LTN 43 từ kho tổng
+    """
+    is_exchange = bool(
+        re.search(r'\b(?:đổi\s*size|đổi\s*mẫu|đổi\s*sang|đổi\s*thành|đổi\s*lấy|đổi)\b', text_clean, re.I) or
+        re.search(r'\b(?:doi\s*size|doi\s*mau|doi\s*sang|doi\s*thanh|doi\s*lay)\b', text_normalized)
+    )
+    if not is_exchange:
+        return None
+
+    # 1. Trích xuất SĐT hoặc Tên khách
+    phone, _ = extract_phone(text_clean)
+
+    doi_split = re.split(r'\b(?:đổi\s*size|đổi\s*mẫu|đổi\s*sang|đổi\s*thành|đổi\s*lấy|đổi|doi\s*size|doi\s*mau|doi\s*sang|doi\s*thanh|doi\s*lay|doi)\b', text_clean, flags=re.I)
+    before_doi = doi_split[0].strip() if len(doi_split) > 1 else ""
+    after_doi = doi_split[1].strip() if len(doi_split) > 1 else text_clean
+
+    customer_name = None
+    cust_search = phone
+    if not cust_search and before_doi:
+        cand_name = re.sub(r'^(?:khách\s*hàng|khách|khach)\s*', '', before_doi, flags=re.I).strip(" ,.-:")
+        if cand_name and len(cand_name) >= 2:
+            customer_name = cand_name.title()
+            cust_search = customer_name
+
+    order = None
+    if cust_search:
+        order = database.find_customer_order(cust_search)
+
+    # 2. Xác định kho lấy hàng mới
+    target_wh = None
+    if any(k in text_normalized for k in ["kho tong", "o nha", "kho 1", "tong"]):
+        target_wh = 1
+    elif any(k in text_normalized for k in ["cua hang", "showroom", "kho 2"]):
+        target_wh = 2
+
+    if not target_wh:
+        target_wh = order["source_warehouse_id"] if order else 1
+
+    # 3. Phân tích mã giày và size cũ / mới
+    prod_codes = set(p['code'].upper() for p in all_prods)
+    prod_map = {p['code'].upper(): p for p in all_prods}
+    code_pat = r'\b(' + '|'.join(re.escape(c) for c in prod_codes) + r')\b'
+
+    codes_found = [x.upper() for x in re.findall(code_pat, after_doi, flags=re.I)]
+    sizes_found = [int(x) for x in re.findall(r'\b(3[8-9]|4[0-7])\b', after_doi)]
+
+    if len(sizes_found) >= 2:
+        old_size, new_size = sizes_found[0], sizes_found[1]
+    elif len(sizes_found) == 1:
+        new_size = sizes_found[0]
+        old_size = order["size"] if order else None
+    else:
+        new_size = None
+        old_size = order["size"] if order else None
+
+    if len(codes_found) >= 2:
+        old_code, new_code = codes_found[0], codes_found[1]
+    elif len(codes_found) == 1:
+        new_code = codes_found[0]
+        old_code = order["product_code"] if order else new_code
+    else:
+        old_code = order["product_code"] if order else None
+        new_code = old_code
+
+    wh_names = {1: "Kho 1 (Kho Tổng - Ở Nhà)", 2: "Kho 2 (Cửa Hàng / Showroom)"}
+    new_wh_name = wh_names.get(target_wh, f"Kho {target_wh}")
+    old_wh_name = wh_names.get(order["source_warehouse_id"], f"Kho {order['source_warehouse_id']}") if order else "Kho xuất cũ"
+
+    # 4. Kiểm tra tồn kho của đôi mới
+    new_prod = prod_map.get(new_code) if new_code else None
+    new_stock = 0
+    new_variant_id = None
+    if new_prod and new_size:
+        v_info = find_variant_with_stock(new_prod['id'], new_size)
+        if v_info:
+            new_variant_id = v_info["variant_id"]
+            new_stock = v_info["stock_wh1"] if target_wh == 1 else v_info["stock_wh2"]
+
+    is_enough = (new_stock >= 1)
+
+    missing_fields = []
+    if not cust_search:
+        missing_fields.append("Tên hoặc SĐT khách hàng cần đổi")
+    elif not order:
+        missing_fields.append(f"Không tìm thấy đơn xuất hàng của khách '{cust_search}'")
+    if not new_code:
+        missing_fields.append("Mã giày mới")
+    if not new_size:
+        missing_fields.append("Size giày mới cần đổi sang")
+
+    cust_disp = order["partner_name"] if order else (customer_name or "Khách hàng")
+    if " - " in cust_disp:
+        cust_disp = cust_disp.split(" - ")[0].strip()
+
+    return {
+        "type": "EXCHANGE",
+        "raw_text": text_clean,
+        "partner_name": cust_disp,
+        "phone": order["customer_phone"] if order else phone,
+        "address": order["customer_address"] if order else None,
+        "platform": order["platform"] if order else "Khác",
+        "order_id": order["transaction_id"] if order else None,
+        "order_code": order["transaction_code"] if order else None,
+        "item_id": order["item_id"] if order else None,
+        "old_variant_id": order["variant_id"] if order else None,
+        "old_product_id": order["product_id"] if order else None,
+        "old_product_code": old_code,
+        "old_product_name": order["product_name"] if order else None,
+        "old_size": old_size,
+        "old_warehouse_id": order["source_warehouse_id"] if order else 1,
+        "old_warehouse_name": old_wh_name,
+        "new_product_id": new_prod['id'] if new_prod else None,
+        "new_product_code": new_code,
+        "new_product_name": new_prod['name'] if new_prod else None,
+        "new_size": new_size,
+        "new_warehouse_id": target_wh,
+        "new_warehouse_name": new_wh_name,
+        "new_stock": new_stock,
+        "is_enough": is_enough,
+        "unit_price": new_prod['retail_price'] if new_prod else 0,
+        "total_amount": 0,
+        "total_quantity": 1,
+        "missing_fields": missing_fields,
+        "notes": f"Đổi hàng: {old_code} sz {old_size} ({old_wh_name}) ➔ {new_code} sz {new_size} ({new_wh_name})"
+    }
+
+
+def parse_adjustment_request(text_clean: str, text_normalized: str, all_prods: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """
+    Nhận diện yêu cầu Bớt hoặc Thêm số lượng tồn kho nhanh:
+    VD:
+    - kho tổng bớt 2 đôi WTD 43
+    - kho tổng thêm 2 đôi WTD 43
+    - cửa hàng bớt 1 đôi CTD 41
+    - ở nhà thêm 3 đôi OGD 40
+    - bớt 2 đôi WTD 43 ở kho tổng
+    - kho 1 giảm 2 đôi WTD 43
+    - kho 2 tăng 1 đôi CTD 40
+    - thêm 2 đôi WTD 43 vào cửa hàng
+    - trừ 1 đôi OXD 41 ở kho 1
+    """
+    has_decrease = any(k in text_normalized for k in ["bot", "giam", "tru", "bo", "hong"])
+    has_increase = any(k in text_normalized for k in ["them", "tang", "cong", "bu", "du"])
+
+    if not has_decrease and not has_increase:
+        return None
+
+    # Loại trừ nếu là giao dịch bán cho khách
+    if re.search(r'\b(?:ban cho|bán cho|xuat cho|xuất cho|giao cho|khach|khách)\b', text_clean, re.I):
+        return None
+    if re.search(r'\b0[35789]\d{8}\b', text_clean):
+        return None
+    if re.search(r'\b(?:đổi\s*size|đổi\s*mẫu|đổi\s*sang|đổi)\b', text_clean, re.I):
+        return None
+
+    is_decrease = has_decrease
+    action_label = "Bớt" if is_decrease else "Thêm"
+    action_type = "DECREASE" if is_decrease else "INCREASE"
+
+    m_act = re.search(r'(?:bot|giam|tru|bo|hong|them|tang|cong|bu|du)\s*(\d+)\s*(?:doi|cap|chiec)?', text_normalized)
+    if m_act:
+        qty = int(m_act.group(1))
+    else:
+        m_q2 = re.search(r'\b(\d+)\s*(?:doi|cap|chiec)\b', text_normalized)
+        qty = int(m_q2.group(1)) if m_q2 else 1
+
+    delta = -qty if is_decrease else qty
+
+    wh = None
+    if any(k in text_normalized for k in ["kho tong", "o nha", "kho 1", "tong"]):
+        wh = 1
+    elif any(k in text_normalized for k in ["cua hang", "showroom", "kho 2"]):
+        wh = 2
+
+    wh_names = {1: "Kho 1 (Kho Tổng - Ở Nhà)", 2: "Kho 2 (Cửa Hàng / Showroom)"}
+
+    prod_codes = set(p['code'].upper() for p in all_prods)
+    prod_map = {p['code'].upper(): p for p in all_prods}
+    code_pat = r'\b(' + '|'.join(re.escape(c) for c in prod_codes) + r')\b'
+
+    m_code = re.search(code_pat, text_clean, flags=re.I)
+    code = m_code.group(1).upper() if m_code else None
+    matched_prod = prod_map.get(code) if code else None
+
+    sizes_found = [int(x) for x in re.findall(r'\b(3[8-9]|4[0-7])\b', text_clean)]
+    sz = sizes_found[-1] if sizes_found else None
+
+    missing_fields = []
+    if not wh:
+        missing_fields.append("Kho cần điều chỉnh ('kho tổng' hoặc 'cửa hàng')")
+    if not matched_prod:
+        missing_fields.append("Mã mẫu giày")
+    if not sz:
+        missing_fields.append("Size giày (38-47)")
+
+    current_stock = 0
+    new_stock = 0
+    variant_id = None
+    is_enough = True
+
+    if wh and matched_prod and sz:
+        v_info = find_variant_with_stock(matched_prod['id'], sz)
+        if v_info:
+            variant_id = v_info["variant_id"]
+            current_stock = v_info["stock_wh1"] if wh == 1 else v_info["stock_wh2"]
+            new_stock = current_stock + delta
+            if new_stock < 0:
+                is_enough = False
+        else:
+            missing_fields.append(f"Không tìm thấy biến thể size {sz} trong hệ thống")
+
+    wh_name = wh_names.get(wh, "Chưa chọn kho") if wh else "Chưa chọn kho"
+
+    return {
+        "type": "ADJUSTMENT",
+        "raw_text": text_clean,
+        "action": action_type,
+        "action_label": action_label,
+        "delta": delta,
+        "quantity": qty,
+        "total_quantity": qty,
+        "warehouse_id": wh,
+        "warehouse_name": wh_name,
+        "product_id": matched_prod['id'] if matched_prod else None,
+        "product_code": code,
+        "product_name": matched_prod['name'] if matched_prod else None,
+        "size": sz,
+        "variant_id": variant_id,
+        "current_stock": current_stock,
+        "new_stock": new_stock,
+        "is_enough": is_enough,
+        "missing_fields": missing_fields,
+        "total_amount": 0,
+        "notes": f"Cân đối tồn kho: {action_label} {qty} đôi {code} size {sz} tại {wh_name} (Tồn cũ: {current_stock} ➔ Tồn mới: {new_stock})"
+    }
+
+
 def parse_natural_language(text: str) -> Dict[str, Any]:
     """
     Phân tích toàn năng văn bản tự nhiên:
-    Hỗ trợ OUTBOUND (xuất bán), INBOUND (nhập kho), TRANSFER (chuyển kho).
+    Hỗ trợ OUTBOUND (xuất bán), INBOUND (nhập kho), TRANSFER (chuyển kho),
+    EXCHANGE (khách đổi size/đổi mẫu), ADJUSTMENT (cân đối / thêm bớt tồn kho).
     """
     text_clean = text.strip()
     if not text_clean:
         return {"error": "Vui lòng nhập nội dung giao dịch."}
 
     text_normalized = normalize_vietnamese(text_clean)
+    all_prods = get_all_products()
+
+    # 0. Kiểm tra yêu cầu CÂN ĐỐI / THÊM / BỚT TỒN KHO NHANH (ADJUSTMENT)
+    adj_parsed = parse_adjustment_request(text_clean, text_normalized, all_prods)
+    if adj_parsed:
+        return adj_parsed
+
+    # 0.1 Kiểm tra yêu cầu KHÁCH ĐỔI SIZE / ĐỔI MẪU (EXCHANGE)
+    ex_parsed = parse_exchange_request(text_clean, text_normalized, all_prods)
+    if ex_parsed:
+        return ex_parsed
 
     # 1. Xác định Loại giao dịch
     is_transfer = any(kw in text_normalized for kw in [
@@ -762,6 +1021,62 @@ def parse_and_create_transaction(text: str) -> Dict[str, Any]:
             "error": f"Chưa đủ thông tin để tạo phiếu: Thiếu {', '.join(parsed['missing_fields'])}",
             "parsed": parsed
         }
+
+    # 1. Nghiệp vụ ĐỔI SIZE / ĐỔI MẪU CHO KHÁCH (EXCHANGE)
+    if parsed.get("type") == "EXCHANGE":
+        if not parsed.get("is_enough"):
+            return {
+                "success": False,
+                "error": f"{parsed['new_warehouse_name']} hiện không đủ hàng (tồn: {parsed['new_stock']}) để đổi cho khách.",
+                "parsed": parsed
+            }
+        try:
+            res = database.execute_exchange_transaction(
+                transaction_id=parsed["order_id"],
+                item_id=parsed["item_id"],
+                old_variant_id=parsed["old_variant_id"],
+                old_warehouse_id=parsed["old_warehouse_id"],
+                new_product_id=parsed["new_product_id"],
+                new_size=parsed["new_size"],
+                new_warehouse_id=parsed["new_warehouse_id"],
+                new_unit_price=parsed.get("unit_price"),
+                exchange_note=parsed.get("notes")
+            )
+            msg = f"Đã thực hiện ĐỔI HÀNG thành công cho khách {parsed['partner_name']}: {parsed['old_product_code']} sz {parsed['old_size']} ➔ {parsed['new_product_code']} sz {parsed['new_size']} (lấy từ {parsed['new_warehouse_name']}). Đơn hàng {parsed['order_code']} và ma trận kho đã được cập nhật tự động."
+            return {
+                "success": True,
+                "message": msg,
+                "transaction": res,
+                "parsed": parsed
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Lỗi khi thực hiện đổi hàng: {str(e)}", "parsed": parsed}
+
+    # 2. Nghiệp vụ CÂN ĐỐI / BỚT / THÊM TỒN KHO NHANH (ADJUSTMENT)
+    if parsed.get("type") == "ADJUSTMENT":
+        if not parsed.get("is_enough"):
+            return {
+                "success": False,
+                "error": f"{parsed['warehouse_name']} hiện có {parsed['current_stock']} đôi, không thể bớt {parsed['quantity']} đôi (tồn kho không thể âm).",
+                "parsed": parsed
+            }
+        try:
+            res = database.execute_stock_adjustment(
+                warehouse_id=parsed["warehouse_id"],
+                product_id=parsed["product_id"],
+                size=parsed["size"],
+                delta=parsed["delta"],
+                reason=parsed.get("notes")
+            )
+            msg = f"Đã cập nhật tồn kho thành công tại {parsed['warehouse_name']}: {parsed['action_label']} {parsed['quantity']} đôi {parsed['product_code']} size {parsed['size']}. Tồn mới: {res['new_stock']} đôi."
+            return {
+                "success": True,
+                "message": msg,
+                "transaction": res,
+                "parsed": parsed
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Lỗi khi cân đối tồn kho: {str(e)}", "parsed": parsed}
 
     items = parsed.get("items", [])
     if not items:

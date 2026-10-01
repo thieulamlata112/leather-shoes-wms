@@ -806,3 +806,252 @@ def get_transactions_list(limit: int = 50, tx_type: Optional[str] = None):
         result.append(t_dict)
     conn.close()
     return result
+
+def find_customer_order(search_term: str, product_code: Optional[str] = None, size: Optional[int] = None) -> Optional[Dict[str, Any]]:
+    """
+    Tìm đơn hàng xuất bán gần nhất của khách theo SĐT, Tên khách hoặc Mã phiếu.
+    Có thể lọc theo mã sản phẩm hoặc size nếu khách có nhiều đơn.
+    """
+    conn = get_db()
+    search_clean = search_term.strip()
+    digits = "".join(c for c in search_clean if c.isdigit())
+    
+    query = """
+        SELECT 
+            t.id as transaction_id, t.code as transaction_code, t.partner_name,
+            t.customer_phone, t.customer_address, t.platform, t.notes, t.source_warehouse_id,
+            t.status, t.created_at,
+            ti.id as item_id, ti.variant_id, ti.size, ti.quantity, ti.unit_price,
+            p.id as product_id, p.code as product_code, p.name as product_name,
+            w.name as warehouse_name
+        FROM transactions t
+        JOIN transaction_items ti ON ti.transaction_id = t.id
+        JOIN product_variants pv ON pv.id = ti.variant_id
+        JOIN products p ON p.id = pv.product_id
+        JOIN warehouses w ON w.id = t.source_warehouse_id
+        WHERE t.type = 'OUTBOUND'
+    """
+    params = []
+    
+    if len(digits) >= 9:
+        query += " AND (t.customer_phone LIKE ? OR t.notes LIKE ?)"
+        params.extend([f"%{digits}%", f"%{digits}%"])
+    else:
+        query += " AND (t.partner_name LIKE ? OR t.notes LIKE ? OR t.code = ?)"
+        params.extend([f"%{search_clean}%", f"%{search_clean}%", search_clean.upper()])
+        
+    if product_code:
+        query += " AND UPPER(p.code) = ?"
+        params.append(product_code.upper())
+    if size:
+        query += " AND ti.size = ?"
+        params.append(size)
+        
+    query += " ORDER BY CASE WHEN t.status != 'CANCELLED' THEN 0 ELSE 1 END, t.created_at DESC, t.id DESC LIMIT 1;"
+    
+    row = conn.execute(query, params).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def execute_exchange_transaction(
+    transaction_id: int,
+    item_id: int,
+    old_variant_id: int,
+    old_warehouse_id: int,
+    new_product_id: int,
+    new_size: int,
+    new_warehouse_id: int,
+    new_unit_price: Optional[float] = None,
+    exchange_note: Optional[str] = ""
+) -> Dict[str, Any]:
+    """
+    Thực hiện nghiệp vụ Khách Đổi Size / Đổi Mẫu:
+    1. Hoàn trả lại đôi cũ vào kho xuất cũ (old_warehouse_id)
+    2. Xuất đôi mới từ kho mới (new_warehouse_id)
+    3. Cập nhật trực tiếp trên phiếu xuất: đổi sang mã/size mới và kho mới
+    4. Cập nhật notes trên phiếu
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        # 1. Tìm biến thể mới của new_product_id và new_size
+        new_var = cursor.execute("""
+            SELECT pv.id as variant_id, p.code as product_code, p.name as product_name,
+                   p.retail_price, COALESCE(i.quantity, 0) as stock_qty
+            FROM product_variants pv
+            JOIN products p ON p.id = pv.product_id
+            LEFT JOIN inventory i ON i.variant_id = pv.id AND i.warehouse_id = ?
+            WHERE pv.product_id = ? AND pv.size = ?;
+        """, (new_warehouse_id, new_product_id, new_size)).fetchone()
+
+        if not new_var:
+            raise ValueError(f"Không tìm thấy biến thể size {new_size} của mẫu giày.")
+
+        new_variant_id = new_var["variant_id"]
+        new_stock = new_var["stock_qty"]
+        new_code = new_var["product_code"]
+
+        wh_names = {1: "Kho Tổng (Ở Nhà)", 2: "Cửa Hàng (Showroom)"}
+        new_wh_name = wh_names.get(new_warehouse_id, f"Kho {new_warehouse_id}")
+        old_wh_name = wh_names.get(old_warehouse_id, f"Kho {old_warehouse_id}")
+
+        # Kiểm tra tồn kho của đôi mới
+        if new_stock < 1:
+            raise ValueError(f"{new_wh_name} hiện không còn mã {new_code} size {new_size} (Tồn: 0 đôi), không thể xuất đổi cho khách.")
+
+        # Lấy thông tin đôi cũ
+        old_item = cursor.execute("""
+            SELECT ti.*, p.code as old_code, pv.size as old_size
+            FROM transaction_items ti
+            JOIN product_variants pv ON pv.id = ti.variant_id
+            JOIN products p ON p.id = pv.product_id
+            WHERE ti.id = ?;
+        """, (item_id,)).fetchone()
+        old_code = old_item["old_code"] if old_item else "Cũ"
+        old_size = old_item["old_size"] if old_item else "?"
+
+        # 2. Hoàn trả đôi cũ vào kho cũ (cộng tồn kho)
+        cursor.execute("""
+            INSERT INTO inventory (variant_id, warehouse_id, quantity)
+            VALUES (?, ?, 1)
+            ON CONFLICT(variant_id, warehouse_id) DO UPDATE SET 
+                quantity = quantity + 1,
+                updated_at = CURRENT_TIMESTAMP;
+        """, (old_variant_id, old_warehouse_id))
+
+        # 3. Xuất đôi mới tại kho mới (trừ tồn kho)
+        cursor.execute("""
+            UPDATE inventory 
+            SET quantity = quantity - 1, updated_at = CURRENT_TIMESTAMP
+            WHERE variant_id = ? AND warehouse_id = ?;
+        """, (new_variant_id, new_warehouse_id))
+
+        # Đơn giá đôi mới
+        final_unit_price = new_unit_price if new_unit_price is not None else (new_var["retail_price"] or old_item["unit_price"])
+
+        # 4. Cập nhật transaction_items trên phiếu xuất cũ
+        cursor.execute("""
+            UPDATE transaction_items 
+            SET variant_id = ?, size = ?, unit_price = ?
+            WHERE id = ?;
+        """, (new_variant_id, new_size, final_unit_price, item_id))
+
+        # 5. Cập nhật phiếu xuất: kho xuất mới và ghi chú đổi
+        tx = cursor.execute("SELECT * FROM transactions WHERE id = ?;", (transaction_id,)).fetchone()
+        current_notes = tx["notes"] or ""
+        log_change = f"[Đổi hàng: {old_code} sz {old_size} ({old_wh_name}) ➔ {new_code} sz {new_size} ({new_wh_name})]"
+        updated_notes = f"{current_notes} | {log_change}" if current_notes else log_change
+        if exchange_note:
+            updated_notes += f" - {exchange_note}"
+
+        cursor.execute("""
+            UPDATE transactions 
+            SET source_warehouse_id = ?, notes = ?, status = 'COMPLETED'
+            WHERE id = ?;
+        """, (new_warehouse_id, updated_notes, transaction_id))
+
+        conn.commit()
+        return {
+            "success": True,
+            "transaction_id": transaction_id,
+            "code": tx["code"],
+            "old_item": f"{old_code} size {old_size} ({old_wh_name})",
+            "new_item": f"{new_code} size {new_size} ({new_wh_name})",
+            "warehouse_name": new_wh_name,
+            "message": f"Đã cập nhật phiếu xuất {tx['code']}: Đổi thành công từ {old_code} size {old_size} sang {new_code} size {new_size} tại {new_wh_name}. Tồn kho đã tự động cập nhật!"
+        }
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+def execute_stock_adjustment(
+    warehouse_id: int,
+    product_id: int,
+    size: int,
+    delta: int,
+    reason: Optional[str] = ""
+) -> Dict[str, Any]:
+    """
+    Thực hiện bớt hoặc thêm số lượng tồn kho nhanh:
+    - delta < 0: Bớt hàng (giảm tồn)
+    - delta > 0: Thêm hàng (tăng tồn)
+    Ghi nhận vào phiếu AUDIT để có lịch sử kiểm toán rõ ràng.
+    """
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        # 1. Tìm biến thể
+        var_row = cursor.execute("""
+            SELECT pv.id as variant_id, p.code as product_code, p.name as product_name, p.cost_price,
+                   COALESCE(i.quantity, 0) as current_qty
+            FROM product_variants pv
+            JOIN products p ON p.id = pv.product_id
+            LEFT JOIN inventory i ON i.variant_id = pv.id AND i.warehouse_id = ?
+            WHERE pv.product_id = ? AND pv.size = ?;
+        """, (warehouse_id, product_id, size)).fetchone()
+
+        if not var_row:
+            raise ValueError(f"Không tìm thấy biến thể size {size} của sản phẩm này.")
+
+        variant_id = var_row["variant_id"]
+        product_code = var_row["product_code"]
+        current_qty = var_row["current_qty"]
+        cost_price = var_row["cost_price"] or 0
+
+        new_qty = current_qty + delta
+        wh_names = {1: "Kho Tổng (Ở Nhà)", 2: "Cửa Hàng (Showroom)"}
+        wh_name = wh_names.get(warehouse_id, f"Kho {warehouse_id}")
+
+        if new_qty < 0:
+            raise ValueError(f"{wh_name} hiện chỉ còn {current_qty} đôi {product_code} size {size}, không thể bớt {abs(delta)} đôi!")
+
+        # 2. Cập nhật tồn kho
+        cursor.execute("""
+            INSERT INTO inventory (variant_id, warehouse_id, quantity)
+            VALUES (?, ?, ?)
+            ON CONFLICT(variant_id, warehouse_id) DO UPDATE SET 
+                quantity = excluded.quantity,
+                updated_at = CURRENT_TIMESTAMP;
+        """, (variant_id, warehouse_id, new_qty))
+
+        # 3. Tạo mã phiếu AUDIT cân đối
+        from datetime import datetime
+        tx_code = f"DC-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        action_str = f"Bớt {abs(delta)}" if delta < 0 else f"Thêm {abs(delta)}"
+        notes_str = f"Cân đối tồn kho ({action_str} đôi): {product_code} size {size} tại {wh_name}. Tồn cũ: {current_qty} ➔ Tồn mới: {new_qty}"
+        if reason:
+            notes_str += f" | Lý do: {reason}"
+
+        cursor.execute("""
+            INSERT INTO transactions (code, type, target_warehouse_id, partner_name, total_quantity, total_amount, notes, status)
+            VALUES (?, 'AUDIT', ?, 'Cân đối tồn kho nhanh', ?, 0, ?, 'COMPLETED');
+        """, (tx_code, warehouse_id, abs(delta), notes_str))
+        tx_id = cursor.lastrowid
+
+        cursor.execute("""
+            INSERT INTO transaction_items (transaction_id, variant_id, size, quantity, unit_price, system_quantity, actual_quantity)
+            VALUES (?, ?, ?, ?, ?, ?, ?);
+        """, (tx_id, variant_id, size, abs(delta), cost_price, current_qty, new_qty))
+
+        conn.commit()
+        return {
+            "success": True,
+            "transaction_id": tx_id,
+            "code": tx_code,
+            "product_code": product_code,
+            "size": size,
+            "warehouse_name": wh_name,
+            "action": action_str,
+            "current_stock": current_qty,
+            "new_stock": new_qty,
+            "delta": delta,
+            "message": f"Đã cập nhật tồn kho: {wh_name} {action_str.lower()} đôi {product_code} {size} (Tồn cũ: {current_qty} đôi ➔ Tồn mới: {new_qty} đôi)."
+        }
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
