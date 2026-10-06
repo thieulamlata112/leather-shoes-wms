@@ -359,7 +359,7 @@ def extract_name_and_address(original_text: str, remaining_text: str, tx_type: s
 
     # 1. Thử nhận diện theo cấu trúc từ khóa trên chuỗi gốc
     m_name = re.search(
-        r'(?:bán\s+cho|xuất\s+cho|khách\s+hàng|khách|tên)[\s:]+([^,;\n]+?)(?=\s+(?:sdt|số điện thoại|điện thoại|phone|địa chỉ|đ/c|đc|ở|tại|đôi giày|đôi|giày|mã|size|sz|cỡ|giá|tiền|qua|nền tảng|$|\b0[3-9]\d{8}\b))',
+        r'(?:bán\s+cho|xuất\s+cho|khách\s+hàng|khách|tên)[\s:]+([^,;\n]+?)(?=(?:\s+(?:sdt|số điện thoại|điện thoại|phone|địa chỉ|đ/c|đc|ở|tại|đôi giày|đôi|giày|mã|size|sz|cỡ|giá|tiền|qua|nền tảng|\b0[3-9]\d{8}\b))|$)',
         original_text,
         re.I
     )
@@ -370,7 +370,7 @@ def extract_name_and_address(original_text: str, remaining_text: str, tx_type: s
 
     if not name:
         m_name2 = re.search(
-            r'\b(?:cho|khách)\s+(?:anh|chị|em|bạn|bác|cô|chú)?\s*([a-zA-ZÀ-ỹ\s]{2,30}?)(?=\s+(?:sdt|số|địa|ở|tại|đôi|giày|mã|size|giá|qua|tiktok|shopee|voz|$|\b0[3-9]\d{8}\b))',
+            r'\b(?:cho|khách)\s+(?:anh|chị|em|bạn|bác|cô|chú)?\s*([a-zA-ZÀ-ỹ\s]{2,30}?)(?=(?:\s+(?:sdt|số|địa|ở|tại|đôi|giày|mã|size|giá|qua|tiktok|shopee|voz|\b0[3-9]\d{8}\b))|$)',
             original_text,
             re.I
         )
@@ -387,7 +387,7 @@ def extract_name_and_address(original_text: str, remaining_text: str, tx_type: s
         return res if len(res) > 1 else None
 
     m_addr = re.search(
-        r'(?:địa\s+chỉ|đ/c|đc|ở|tại)[\s:]+([^;\n]+?)(?=\s+(?:đôi\s+giày|đôi|giày|mã|size|sz|cỡ|giá|tiền|sdt|số điện thoại|phone|sl|số lượng|qua|nền tảng|$))',
+        r'(?:địa\s+chỉ|đ/c|đc|ở|tại)[\s:]+([^;\n]+?)(?=(?:\s+(?:đôi\s+giày|đôi|giày|mã|size|sz|cỡ|giá|tiền|sdt|số điện thoại|phone|sl|số lượng|qua|nền tảng))|$)',
         original_text,
         re.I
     )
@@ -399,8 +399,12 @@ def extract_name_and_address(original_text: str, remaining_text: str, tx_type: s
         return name, address
 
     # 2. Phân tích tự do không cố định vị trí trên remaining_text (ví dụ: 'Trần Minh Trí, 103/1 Cù Chính Lan, Thanh Khê, Đà Nẵng')
-    # Làm sạch các từ thừa không thuộc về tên hay địa chỉ
     clean_rem = remaining_text
+    if address:
+        clean_rem = re.sub(rf'(?:địa\s+chỉ|đ/c|đc|ở|tại)[\s:]+{re.escape(address)}', ' ', clean_rem, flags=re.I)
+        clean_rem = clean_rem.replace(address, ' ')
+
+    # Làm sạch các từ thừa không thuộc về tên hay địa chỉ
     garbage_kws = [
         r'\bbán\s+(?:từ\s+)?cho\b', r'\bbán\s+từ\b', r'\bbán\b', r'\bxuất\s+cho\b', r'\bxuất\b',
         r'\bcho\s+(?:anh|chị|em|bạn|bác|cô|chú)\b', r'\b(?:anh|chị|em|bạn|bác|cô|chú)\b',
@@ -683,37 +687,40 @@ def parse_adjustment_request(text_clean: str, text_normalized: str, all_prods: L
     - thêm 2 đôi WTD 43 vào cửa hàng
     - trừ 1 đôi OXD 41 ở kho 1
     """
-    has_decrease = any(k in text_normalized for k in ["bot", "giam", "tru", "bo", "hong"])
-    has_increase = any(k in text_normalized for k in ["them", "tang", "cong", "bu", "du"])
+    # Nhận diện hành động tăng / giảm tồn kho
+    m_dec = re.search(r'\b(?:bớt|giảm|trừ|bỏ|hỏng|bot|giam|tru|bo|hong)\b', text_clean, re.I)
+    m_inc = re.search(r'\b(?:thêm|tăng|cộng|bù|dư|them|tang|cong|bu|du)\b', text_clean, re.I)
 
-    if not has_decrease and not has_increase:
+    if not m_dec and not m_inc:
         return None
 
-    # Loại trừ nếu là giao dịch bán cho khách
+    # Loại trừ nếu là giao dịch bán cho khách (có giá tiền, sđt, từ khóa bán)
     if re.search(r'\b(?:ban cho|bán cho|xuat cho|xuất cho|giao cho|khach|khách)\b', text_clean, re.I):
         return None
     if re.search(r'\b0[35789]\d{8}\b', text_clean):
         return None
     if re.search(r'\b(?:đổi\s*size|đổi\s*mẫu|đổi\s*sang|đổi)\b', text_clean, re.I):
         return None
+    if re.search(r'\b\d+\s*(?:k|tr|triệu|nghìn|vnd|đ)\b', text_clean, re.I):
+        return None
 
-    is_decrease = has_decrease
+    is_decrease = bool(m_dec)
     action_label = "Bớt" if is_decrease else "Thêm"
     action_type = "DECREASE" if is_decrease else "INCREASE"
 
-    m_act = re.search(r'(?:bot|giam|tru|bo|hong|them|tang|cong|bu|du)\s*(\d+)\s*(?:doi|cap|chiec)?', text_normalized)
-    if m_act:
+    m_act = re.search(r'\b(?:bớt|giảm|trừ|bỏ|hỏng|thêm|tăng|cộng|bù|dư|bot|giam|tru|bo|hong|them|tang|cong|bu|du)\s*(\d+)\s*(?:đôi|doi|cặp|cap|chiếc|chiec)?\b', text_clean, re.I)
+    if m_act and m_act.group(1):
         qty = int(m_act.group(1))
     else:
-        m_q2 = re.search(r'\b(\d+)\s*(?:doi|cap|chiec)\b', text_normalized)
+        m_q2 = re.search(r'\b(\d+)\s*(?:đôi|doi|cặp|cap|chiếc|chiec)\b', text_clean, re.I)
         qty = int(m_q2.group(1)) if m_q2 else 1
 
     delta = -qty if is_decrease else qty
 
     wh = None
-    if any(k in text_normalized for k in ["kho tong", "o nha", "kho 1", "tong"]):
+    if any(re.search(rf'\b{re.escape(k)}\b', text_normalized) for k in ["kho tong", "o nha", "kho 1", "tong"]):
         wh = 1
-    elif any(k in text_normalized for k in ["cua hang", "showroom", "kho 2"]):
+    elif any(re.search(rf'\b{re.escape(k)}\b', text_normalized) for k in ["cua hang", "showroom", "kho 2"]):
         wh = 2
 
     wh_names = {1: "Kho 1 (Kho Tổng - Ở Nhà)", 2: "Kho 2 (Cửa Hàng / Showroom)"}
@@ -779,11 +786,111 @@ def parse_adjustment_request(text_clean: str, text_normalized: str, all_prods: L
     }
 
 
+def parse_cancel_request(text_clean: str, text_normalized: str) -> Optional[Dict[str, Any]]:
+    """
+    Nhận diện yêu cầu HỦY ĐƠN HÀNG:
+    VD:
+    - khách A hủy đơn
+    - 0344117974 hủy đơn
+    - hủy đơn khách Trần Minh Trí
+    - hủy đơn 0344117974
+    - hủy đơn PX-0144
+    - hủy phiếu PX-0144
+    """
+    is_cancel = bool(
+        re.search(r'\b(?:hủy\s*đơn\s*hàng|hủy\s*đơn|hủy\s*phiếu\s*xuất|hủy\s*phiếu|hủy\s*order)\b', text_clean, re.I) or
+        re.search(r'\b(?:huy\s*don\s*hang|huy\s*don|huy\s*phieu\s*xuat|huy\s*phieu)\b', text_normalized) or
+        (re.search(r'\b(?:hủy|huy)\b', text_normalized) and re.search(r'\b(?:đơn|phiếu|don|phieu|px-[\w\-]+)\b', text_clean, re.I))
+    )
+    if not is_cancel:
+        return None
+
+    # Không nhận nhầm nếu có từ khóa đổi size
+    if re.search(r'\b(?:đổi\s*size|đổi\s*mẫu|doi\s*size|doi\s*mau)\b', text_clean, re.I):
+        return None
+
+    # 1. Trích xuất mã phiếu PX-...
+    m_code = re.search(r'\b(P[XNC]-[\w\-]+)\b', text_clean, re.I)
+    search_term = None
+    if m_code:
+        search_term = m_code.group(1).upper()
+
+    # 2. SĐT
+    if not search_term:
+        phone, _ = extract_phone(text_clean)
+        if phone:
+            search_term = phone
+
+    # 3. Tên khách hàng từ chuỗi
+    if not search_term:
+        parts = re.split(r'\b(?:hủy\s*đơn\s*hàng|hủy\s*đơn|hủy\s*phiếu\s*xuất|hủy\s*phiếu|hủy|huy\s*don|huy\s*phieu|huy)\b', text_clean, flags=re.I)
+        cand_str = ""
+        if len(parts) > 1:
+            if parts[0].strip():
+                cand_str = parts[0].strip()
+            else:
+                cand_str = parts[1].strip()
+        else:
+            cand_str = text_clean
+
+        cand_str = re.sub(r'^(?:của\s+khách\s+hàng|của\s+khách|của\s+anh|của\s+chị|của\s+em|của|khách\s+hàng|khách|anh|chị|em|bạn)\s+', '', cand_str, flags=re.I).strip(" ,.-:")
+        cand_str = re.sub(r'\s+(?:ạ|nhé|nha|với|nhá|giúp)$', '', cand_str, flags=re.I).strip(" ,.-:")
+        if cand_str and len(cand_str) >= 2:
+            search_term = cand_str.title()
+
+    order = None
+    if search_term:
+        order = database.find_order_for_cancellation(search_term)
+
+    missing_fields = []
+    if not search_term:
+        missing_fields.append("Mã phiếu (PX-...) hoặc Tên/SĐT khách cần hủy đơn")
+    elif not order:
+        missing_fields.append(f"Không tìm thấy đơn hàng xuất bán phù hợp với '{search_term}'")
+
+    is_already_cancelled = False
+    if order and order.get("status") == "CANCELLED":
+        is_already_cancelled = True
+
+    items = order.get("items", []) if order else []
+    items_summary = ", ".join([f"{it['product_code']} sz {it['size']} ({it['quantity']} đôi)" for it in items])
+    total_qty = order.get("total_quantity", 0) if order else 0
+    total_amount = order.get("total_amount", 0) if order else 0
+    wh_name = order.get("warehouse_name") if order else "Kho xuất"
+    cust_disp = order.get("partner_name", "") if order else (search_term or "Khách hàng")
+    if " - " in cust_disp:
+        cust_disp = cust_disp.split(" - ")[0].strip()
+
+    notes_action = f"Hủy phiếu {order.get('code', '')}: Hoàn trả {total_qty} đôi ({items_summary}) vào {wh_name}" if order else ""
+
+    return {
+        "type": "CANCEL",
+        "raw_text": text_clean,
+        "search_term": search_term,
+        "transaction_id": order["id"] if order else None,
+        "transaction_code": order["code"] if order else None,
+        "status": order.get("status") if order else None,
+        "is_already_cancelled": is_already_cancelled,
+        "partner_name": cust_disp,
+        "phone": order.get("customer_phone") if order else None,
+        "address": order.get("customer_address") if order else None,
+        "platform": order.get("platform", "Khác") if order else "Khác",
+        "warehouse_id": order.get("source_warehouse_id") if order else None,
+        "warehouse_name": wh_name,
+        "items": items,
+        "total_quantity": total_qty,
+        "total_amount": total_amount,
+        "missing_fields": missing_fields,
+        "notes": notes_action
+    }
+
+
 def parse_natural_language(text: str) -> Dict[str, Any]:
     """
     Phân tích toàn năng văn bản tự nhiên:
     Hỗ trợ OUTBOUND (xuất bán), INBOUND (nhập kho), TRANSFER (chuyển kho),
-    EXCHANGE (khách đổi size/đổi mẫu), ADJUSTMENT (cân đối / thêm bớt tồn kho).
+    EXCHANGE (khách đổi size/đổi mẫu), ADJUSTMENT (cân đối / thêm bớt tồn kho),
+    CANCEL (hủy đơn hàng).
     """
     text_clean = text.strip()
     if not text_clean:
@@ -792,12 +899,17 @@ def parse_natural_language(text: str) -> Dict[str, Any]:
     text_normalized = normalize_vietnamese(text_clean)
     all_prods = get_all_products()
 
-    # 0. Kiểm tra yêu cầu CÂN ĐỐI / THÊM / BỚT TỒN KHO NHANH (ADJUSTMENT)
+    # 0. Kiểm tra yêu cầu HỦY ĐƠN HÀNG (CANCEL)
+    cancel_parsed = parse_cancel_request(text_clean, text_normalized)
+    if cancel_parsed:
+        return cancel_parsed
+
+    # 0.1 Kiểm tra yêu cầu CÂN ĐỐI / THÊM / BỚT TỒN KHO NHANH (ADJUSTMENT)
     adj_parsed = parse_adjustment_request(text_clean, text_normalized, all_prods)
     if adj_parsed:
         return adj_parsed
 
-    # 0.1 Kiểm tra yêu cầu KHÁCH ĐỔI SIZE / ĐỔI MẪU (EXCHANGE)
+    # 0.2 Kiểm tra yêu cầu KHÁCH ĐỔI SIZE / ĐỔI MẪU (EXCHANGE)
     ex_parsed = parse_exchange_request(text_clean, text_normalized, all_prods)
     if ex_parsed:
         return ex_parsed
@@ -853,6 +965,29 @@ def parse_natural_language(text: str) -> Dict[str, Any]:
 
     # 7. Bóc tách Tên khách hàng & Địa chỉ từ chuỗi đã bóc sạch kho, giá, size, sđt
     name, address = extract_name_and_address(text_clean, text_after_wh, tx_type)
+
+    # 7.1 Tự động lấy thông tin khách cũ (Địa chỉ, SĐT, Tên, Nền tảng) nếu còn thiếu
+    is_autofilled = False
+    autofill_fields = []
+    if tx_type == "OUTBOUND" and (phone or (name and len(name) >= 2)):
+        cust_profile = database.find_customer_profile(phone=phone, name=name)
+        if cust_profile:
+            if not phone and cust_profile.get("phone"):
+                phone = cust_profile["phone"]
+                is_autofilled = True
+                autofill_fields.append("SĐT")
+            if not name and cust_profile.get("name"):
+                name = cust_profile["name"]
+                is_autofilled = True
+                autofill_fields.append("Tên")
+            if not address and cust_profile.get("address"):
+                address = cust_profile["address"]
+                is_autofilled = True
+                autofill_fields.append("Địa chỉ")
+            if (not platform or platform == "Khác") and cust_profile.get("platform") and cust_profile["platform"] != "Khác":
+                platform = cust_profile["platform"]
+                is_autofilled = True
+                autofill_fields.append("Nền tảng")
 
     # Đơn giá
     if tx_type == "TRANSFER":
@@ -1004,7 +1139,9 @@ def parse_natural_language(text: str) -> Dict[str, Any]:
         "is_explicit_warehouse": is_explicit_wh,
         "variant_id": primary_variant_id,
         "notes": notes,
-        "missing_fields": missing_fields
+        "missing_fields": missing_fields,
+        "is_autofilled": is_autofilled,
+        "autofill_fields": autofill_fields
     }
 
 
@@ -1021,6 +1158,27 @@ def parse_and_create_transaction(text: str) -> Dict[str, Any]:
             "error": f"Chưa đủ thông tin để tạo phiếu: Thiếu {', '.join(parsed['missing_fields'])}",
             "parsed": parsed
         }
+
+    # 0. Nghiệp vụ HỦY ĐƠN HÀNG (CANCEL)
+    if parsed.get("type") == "CANCEL":
+        if parsed.get("is_already_cancelled"):
+            return {
+                "success": False,
+                "error": f"Đơn hàng {parsed['transaction_code']} của khách {parsed['partner_name']} đã bị hủy trước đó.",
+                "parsed": parsed
+            }
+        try:
+            res = database.cancel_transaction(parsed["transaction_id"])
+            items_str = ", ".join([f"{it['product_code']} sz {it['size']} ({it['quantity']} đôi)" for it in parsed.get("items", [])])
+            msg = f"Đã HỦY ĐƠN {parsed['transaction_code']} của khách {parsed['partner_name']} thành công. Toàn bộ {parsed['total_quantity']} đôi ({items_str}) đã được hoàn trả lại vào {parsed['warehouse_name']}."
+            return {
+                "success": True,
+                "message": msg,
+                "transaction": res,
+                "parsed": parsed
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Lỗi khi hủy đơn hàng: {str(e)}", "parsed": parsed}
 
     # 1. Nghiệp vụ ĐỔI SIZE / ĐỔI MẪU CHO KHÁCH (EXCHANGE)
     if parsed.get("type") == "EXCHANGE":

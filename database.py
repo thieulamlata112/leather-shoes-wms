@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import re
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -1054,4 +1055,153 @@ def execute_stock_adjustment(
         raise
     finally:
         conn.close()
+
+
+def find_customer_profile(phone: Optional[str] = None, name: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """
+    Tra cứu hồ sơ khách hàng cũ từng mua (từ đơn OUTBOUND gần nhất).
+    Tự động trích xuất Tên, SĐT, Địa chỉ, Nền tảng kể cả khi lưu trong notes kiểu cũ.
+    """
+    conn = get_db()
+    try:
+        clean_phone = "".join(c for c in str(phone) if c.isdigit()) if phone else None
+        clean_name = name.strip() if name else None
+        
+        row = None
+        # 1. Ưu tiên tìm theo SĐT
+        if clean_phone and len(clean_phone) >= 9:
+            row = conn.execute("""
+                SELECT partner_name, customer_phone, customer_address, platform, notes
+                FROM transactions
+                WHERE type = 'OUTBOUND' AND (customer_phone LIKE ? OR notes LIKE ? OR partner_name LIKE ?)
+                ORDER BY CASE WHEN status != 'CANCELLED' THEN 0 ELSE 1 END, id DESC
+                LIMIT 1;
+            """, (f"%{clean_phone}%", f"%{clean_phone}%", f"%{clean_phone}%")).fetchone()
+            
+        # 2. Nếu chưa tìm thấy và có tên (ít nhất 2 ký tự)
+        if not row and clean_name and len(clean_name) >= 2:
+            row = conn.execute("""
+                SELECT partner_name, customer_phone, customer_address, platform, notes
+                FROM transactions
+                WHERE type = 'OUTBOUND' AND (partner_name LIKE ? OR notes LIKE ?)
+                ORDER BY CASE WHEN status != 'CANCELLED' THEN 0 ELSE 1 END, id DESC
+                LIMIT 1;
+            """, (f"%{clean_name}%", f"%{clean_name}%")).fetchone()
+            
+        if not row:
+            return None
+            
+        r = dict(row)
+        raw_name = r.get("partner_name") or ""
+        # Bỏ SĐT ở cuối name nếu có: "Trần Minh Trí - 0344117974" -> "Trần Minh Trí"
+        cust_name = re.sub(r'\s*[\-:]\s*0[35789]\d{8}\b', '', raw_name).strip()
+        cust_phone = r.get("customer_phone")
+        cust_addr = r.get("customer_address")
+        cust_platform = r.get("platform") if r.get("platform") and r.get("platform") != "Khác" else None
+        notes = r.get("notes") or ""
+        
+        # Bóc từ notes định dạng mới: SĐT: ... | Đ/c: ... | Nền tảng: ...
+        if not cust_phone:
+            m_p = re.search(r'(?:SĐT|SDT|phone)[\s:]*([0-9\.\s]{9,15})', notes, re.I)
+            if m_p:
+                raw_digits = re.sub(r'[^\d]', '', m_p.group(1))
+                if len(raw_digits) in [10, 11]:
+                    cust_phone = raw_digits
+        if not cust_addr:
+            m_a = re.search(r'(?:Đ/c|Địa chỉ|Dia chi)[\s:]*([^|\n]+)', notes, re.I)
+            if m_a:
+                cand = m_a.group(1).strip()
+                if cand and cand != 'K':
+                    cust_addr = cand
+        if not cust_platform:
+            m_pl = re.search(r'(?:Nền tảng|Platform)[\s:]*([^|\n]+)', notes, re.I)
+            if m_pl:
+                cand = m_pl.group(1).strip()
+                if cand and cand != 'Khác':
+                    cust_platform = cand
+
+        # Bóc từ notes định dạng cũ của Excel: "Page | 0589126890 | 102 An Trạch"
+        parts = [p.strip() for p in notes.split("|") if p.strip()]
+        if len(parts) >= 2:
+            if not cust_platform:
+                p0 = parts[0]
+                if any(kw in p0.lower() for kw in ["page", "voz", "tiktok", "shopee", "nhóm"]):
+                    cust_platform = p0
+            if not cust_phone:
+                for pt in parts:
+                    m_dig = re.search(r'\b(0[35789]\d{8})\b', pt)
+                    if m_dig:
+                        cust_phone = m_dig.group(1)
+                        break
+            if not cust_addr:
+                for pt in parts:
+                    if pt == cust_platform:
+                        continue
+                    if cust_phone and cust_phone in pt.replace(" ", ""):
+                        continue
+                    if pt != 'K' and len(pt) > 3:
+                        cust_addr = pt
+                        break
+
+        return {
+            "name": cust_name if cust_name else None,
+            "phone": cust_phone,
+            "address": cust_addr,
+            "platform": cust_platform or "Khác"
+        }
+    finally:
+        conn.close()
+
+
+def find_order_for_cancellation(search_term: str) -> Optional[Dict[str, Any]]:
+    """
+    Tìm đơn hàng xuất bán (OUTBOUND) để thực hiện hủy đơn.
+    Hỗ trợ tìm theo Mã phiếu (PX-...), Số điện thoại, hoặc Tên khách hàng.
+    Ưu tiên các đơn đang hiệu lực (status != 'CANCELLED').
+    """
+    conn = get_db()
+    try:
+        term = search_term.strip()
+        digits = "".join(c for c in term if c.isdigit())
+        
+        query = """
+            SELECT t.*, w.name as warehouse_name
+            FROM transactions t
+            LEFT JOIN warehouses w ON w.id = t.source_warehouse_id
+            WHERE t.type = 'OUTBOUND'
+        """
+        params = []
+        
+        # 1. Tìm theo mã phiếu (VD: PX-...)
+        m_code = re.search(r'\b(PX-[\w\-]+)\b', term, re.I)
+        if m_code:
+            query += " AND UPPER(t.code) = ?"
+            params.append(m_code.group(1).upper())
+        elif len(digits) >= 9:
+            query += " AND (t.customer_phone LIKE ? OR t.notes LIKE ? OR t.partner_name LIKE ?)"
+            params.extend([f"%{digits}%", f"%{digits}%", f"%{digits}%"])
+        else:
+            query += " AND (t.partner_name LIKE ? OR t.notes LIKE ? OR UPPER(t.code) = ?)"
+            params.extend([f"%{term}%", f"%{term}%", term.upper()])
+            
+        query += " ORDER BY CASE WHEN t.status != 'CANCELLED' THEN 0 ELSE 1 END, t.created_at DESC, t.id DESC LIMIT 1;"
+        
+        row = conn.execute(query, params).fetchone()
+        if not row:
+            return None
+            
+        tx = dict(row)
+        items = conn.execute("""
+            SELECT ti.*, p.code as product_code, p.name as product_name
+            FROM transaction_items ti
+            JOIN product_variants pv ON pv.id = ti.variant_id
+            JOIN products p ON p.id = pv.product_id
+            WHERE ti.transaction_id = ?;
+        """, (tx["id"],)).fetchall()
+        
+        tx["items"] = [dict(it) for it in items]
+        return tx
+    finally:
+        conn.close()
+
 
