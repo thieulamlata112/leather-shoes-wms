@@ -911,14 +911,14 @@ def execute_exchange_transaction(
         old_code = old_item["old_code"] if old_item else "Cũ"
         old_size = old_item["old_size"] if old_item else "?"
 
-        # 2. Hoàn trả đôi cũ vào kho cũ (cộng tồn kho)
+        # 2. Hoàn trả đôi cũ vào KHO MỚI (quy tắc người dùng: Hoàn kho mới ➔ Trừ kho mới)
         cursor.execute("""
             INSERT INTO inventory (variant_id, warehouse_id, quantity)
             VALUES (?, ?, 1)
             ON CONFLICT(variant_id, warehouse_id) DO UPDATE SET 
                 quantity = quantity + 1,
                 updated_at = CURRENT_TIMESTAMP;
-        """, (old_variant_id, old_warehouse_id))
+        """, (old_variant_id, new_warehouse_id))
 
         # 3. Xuất đôi mới tại kho mới (trừ tồn kho)
         cursor.execute("""
@@ -940,7 +940,7 @@ def execute_exchange_transaction(
         # 5. Cập nhật phiếu xuất: kho xuất mới và ghi chú đổi
         tx = cursor.execute("SELECT * FROM transactions WHERE id = ?;", (transaction_id,)).fetchone()
         current_notes = tx["notes"] or ""
-        log_change = f"[Đổi hàng: {old_code} sz {old_size} ({old_wh_name}) ➔ {new_code} sz {new_size} ({new_wh_name})]"
+        log_change = f"[Đổi hàng: Hoàn {old_code} sz {old_size} về {new_wh_name} ➔ Trừ {new_code} sz {new_size} tại {new_wh_name}]"
         updated_notes = f"{current_notes} | {log_change}" if current_notes else log_change
         if exchange_note:
             updated_notes += f" - {exchange_note}"

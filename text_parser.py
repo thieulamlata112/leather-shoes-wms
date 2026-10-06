@@ -669,7 +669,7 @@ def parse_exchange_request(text_clean: str, text_normalized: str, all_prods: Lis
         "total_amount": 0,
         "total_quantity": 1,
         "missing_fields": missing_fields,
-        "notes": f"Đổi hàng: {old_code} sz {old_size} ({old_wh_name}) ➔ {new_code} sz {new_size} ({new_wh_name})"
+        "notes": f"Đổi hàng: Hoàn {old_code} sz {old_size} về {new_wh_name} ➔ Trừ {new_code} sz {new_size} tại {new_wh_name}"
     }
 
 
